@@ -1,4 +1,3 @@
-
 #include <cmath>
 #include <vector>
 #include <array>
@@ -14,14 +13,18 @@ namespace evolve
         inline void top(std::vector<genome>& population,
                         std::function<float(const genome&)> evaluator)
         {
-/*          assert( !population.empty() );
+            assert(population.size() >= num );
 
-            std::sort(population, evaluator);
+            std::sort(population.begin(), population.end(),
+                      [&](const genome& left,
+                          const genome& right)
+                      {
+                          return evaluator(left) < evaluator(right);
+                      });
             
             auto start = population.begin();
             std::advance(start, num);
-            population.erase(population.begin(), population.remove(start, population.end()));
-*/
+            population.erase(start, population.end());
         }
     }
 
@@ -55,6 +58,18 @@ namespace evolve
                 
             }
         }
+
+        namespace Mutator
+        {
+            template<typename genome>
+            inline void swap(genome& g)
+            {
+                unsigned int s1 = rand() % g.size();
+                unsigned int s2 = rand() % g.size();
+
+                std::swap(g[s1], g[s2]);
+            }
+        }
     }
 
     
@@ -65,6 +80,7 @@ namespace evolve
         SimpleGA(std::function<float(const genomeType&)> _evaluator,
                  std::function<void(genomeType&,
                                     genomeType&)> _crossover,
+                 std::function<void(genomeType&)> _mutator,
                  std::function<void(std::vector<genomeType>&,
                                     std::function<float(const genomeType&)>)> _selector,
                  unsigned long _generations = 10000UL) :
@@ -76,12 +92,20 @@ namespace evolve
         void run()
         {
         }
+
+        void setPopulation(const std::array<genomeType, popSize>& _population) {
+            population = _population;
+        }
+
+        std::array<genomeType, popSize>& getPopulation() const {return population;}
+
         
     protected:
         std::array<genomeType, popSize> population;
         std::function<float(const genomeType&)> evaluator;
         std::function<void(genomeType&,
                            genomeType&)> crossover;
+        std::function<void(genomeType&)> mutator;
         std::function<void(std::vector<genomeType>&,
                            std::function<float(const genomeType&)>)> selector;
 
