@@ -1,55 +1,91 @@
 
+#include <cmath>
+#include <vector>
+#include <array>
+#include <cassert>
+#include <functional>
+#include <algorithm>
 
 namespace evolve
-{
-
-    class BaseGenome
+{    
+    namespace Selectors
     {
-    public:
-        virtual void crossover(float rate)=0;
-        virtual void mutate(float rate)=0;
-        virtual float evaluate()=0;
-    };
-    
-    template<typename T, size_t size>
-    lass ListGenome : public BaseGenome
+        template<typename genome, size_t num>
+        inline void top(std::vector<genome>& population,
+                        std::function<float(const genome&)> evaluator)
+        {
+/*          assert( !population.empty() );
+
+            std::sort(population, evaluator);
+            
+            auto start = population.begin();
+            std::advance(start, num);
+            population.erase(population.begin(), population.remove(start, population.end()));
+*/
+        }
+    }
+
+    namespace ListGenome
     {
-    public:
-        ListGenome(std::function<float(T)> _evaluator,
-                   std::function<void(T&, T&)> _crossover) :
-            evaluator(_evaluator),
-            crossover(_crossover){}
+        template <typename T>
+        using List1D = std::vector<T>;
 
-        virtual void crossover(float rate) override {}
-        virtual void mutate(float rate) override {}
-        virtual float evaluator() override {}
-        
-    protected:
-        std::array<T, size> genome;
-        std::function<float(T)> evaluator;
-        std::function<void(T&, T&)> crossover;
-    };
+        template<typename T, size_t size>
+        using List1DFixed = std::array<T, size>;
+
+        namespace Evaluator
+        {
+            template<typename genome>
+            inline float sum(const genome& g)
+            {
+                float total = 0.0f;
+                for(auto allele : g) {
+                    total += allele;
+                }
+                return total; 
+            }
+        }
+
+        namespace Crossover
+        {
+            template<typename genome>
+            inline void singlePoint(genome& g1,
+                                    genome& g2)
+            {
+                
+            }
+        }
+    }
 
     
+    template<typename genomeType, size_t popSize=100>
     class SimpleGA
     {
     public:
-        SimpleGA(BaseGenome* _genome,
+        SimpleGA(std::function<float(const genomeType&)> _evaluator,
+                 std::function<void(genomeType&,
+                                    genomeType&)> _crossover,
+                 std::function<void(std::vector<genomeType>&,
+                                    std::function<float(const genomeType&)>)> _selector,
                  unsigned long _generations = 10000UL) :
-            genome(_genome),
-            gernerations(_generations){}
-
+            evaluator(_evaluator),
+            crossover(_crossover),
+            selector(_selector),
+            generations(_generations){}
+            
         void run()
         {
-            for(auto generation : generations) {
-                genome->
         }
         
     protected:
-        std::vector<BaseGenome*>  population;
-        unsigned long generations;
-        
+        std::array<genomeType, popSize> population;
+        std::function<float(const genomeType&)> evaluator;
+        std::function<void(genomeType&,
+                           genomeType&)> crossover;
+        std::function<void(std::vector<genomeType>&,
+                           std::function<float(const genomeType&)>)> selector;
+
+        unsigned long generations;        
     };
 }
-        
-        
+
