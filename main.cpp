@@ -1,7 +1,8 @@
 
-#include "cppEvolve.hpp"
+#include "cppEvolve/cppEvolve.hpp"
+#include "cppEvolve/Genome/List1D/List1D.hpp"
 #include <ctime>
-#include <list>
+#include <cstdlib>
 
 using namespace evolve;
 
@@ -15,15 +16,15 @@ int main()
 {
 
     srand(time(NULL));
-    typedef std::array<int, 5> genome;
+    typedef List1DGenome::List1D<int> genome;
 
-    Generator<genome> generator(foo);
+    Generator<genome> generator(foo, 5);
 
     SimpleGA<genome, 400> ga(generator,
-                             ListGenome::Evaluator::sum<genome>,
-                             ListGenome::Crossover::singlePoint<genome>,
-                             ListGenome::Mutator::swap<genome>,
-                             Selectors::top<genome, 30>,
+                             List1DGenome::Evaluator::sum<genome>,
+                             List1DGenome::Crossover::singlePoint<genome>,
+                             List1DGenome::Mutator::swap<genome>,
+                             Selector::top<genome, 30>,
                              10);
 
     ga.run();
