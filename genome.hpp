@@ -1,43 +1,80 @@
+#ifndef GENOME_H_
+#define GENOME_H_
+
+
 #include <cmath>
 #include <vector>
 #include <array>
 #include <cassert>
 #include <functional>
 #include <algorithm>
+#include <type_traits>
 #include <iostream>
+
+#include "utils.hpp"
 
 namespace evolve
 {
+    template<typename genome, typename enabled = void>
+    class Generator;
 
     template<typename genome>
-    class Generator
+    class Generator<genome, typename std::enable_if<has_insert<genome>::value>::type>
     {
     public:
         typedef typename genome::value_type allele;
-        
         Generator(std::function<allele(void)> _gen,
-                  unsigned int _num) :
+              unsigned int _num) :
             gen(_gen),
             num(_num){}
 
         genome operator()() {
             genome g;
 
-            for(auto i=0; i < num; i++) {
+            for(auto i=0U; i < num; i++) {
                 g.insert(g.end(), gen());
             }
 
             return g;
-       }
+        }
 
     protected:
         std::function<allele(void)> gen;
         unsigned int num;
 
     };
-    
+
+
+    template<typename genome>
+    class Generator<genome, typename std::enable_if<!has_insert<genome>::value>::type >
+    {
+    public:
+        typedef typename genome::value_type allele;
+        Generator(std::function<allele(void)> _gen,
+              unsigned int _num) :
+            gen(_gen),
+            num(_num){}
+
+        genome operator()() {
+            genome g;
+
+            for(auto i=0U; i < num; i++) {
+                g[i] = gen();
+            }
+
+            return g;
+        }
+
+    protected:
+        std::function<allele(void)> gen;
+        unsigned int num;
+
+    };
+
+
+
     namespace Selectors
-    {      
+    {
         template<typename genome, size_t num>
         inline void top(std::vector<genome>& population,
                         std::function<float(const genome&)> evaluator)
@@ -51,7 +88,7 @@ namespace evolve
                       {
                           return evaluator(left) > evaluator(right);
                       });
-            
+
             auto start = population.begin();
             std::advance(start, num);
             population.erase(start, population.end());
@@ -75,7 +112,7 @@ namespace evolve
                 for(auto allele : g) {
                     total += allele;
                 }
-                return total; 
+                return total;
             }
         }
 
@@ -92,31 +129,48 @@ namespace evolve
 
                 auto g1location = g1.begin();
                 auto g2location = g2.begin();
-                
+
                 std::advance(g1location, location);
                 std::advance(g2location, location);
-                
+
                 g.insert(g.begin(), g1.begin(), g1location);
                 g.insert(g.end(), g2location, g2.end());
                 return g;
-                
+
             }
         }
 
         namespace Mutator
         {
             template<typename genome>
-            inline void swap(genome& g)
+            typename std::enable_if<has_slicing<genome>::value, void>::type
+                swap(genome& g)
             {
                 unsigned int s1 = rand() % g.size();
                 unsigned int s2 = rand() % g.size();
 
                 std::swap(g[s1], g[s2]);
             }
+
+            template<typename genome>
+            typename std::enable_if<!has_slicing<genome>::value, void>::type
+                swap(genome& g)
+            {
+                unsigned int s1 = rand() % g.size();
+                unsigned int s2 = rand() % g.size();
+
+                auto s1location = g.begin();
+                auto s2location = g.begin();
+
+                std::advance(s1location, s1);
+                std::advance(s2location, s2);
+
+                std::swap(s1location, s2location);
+            }
         }
     }
 
-    
+
     template<typename genomeType, size_t popSize=100>
     class SimpleGA
     {
@@ -139,13 +193,13 @@ namespace evolve
         genomeType& getRandomIndividual() {
             return population[rand() % population.size()];
         }
-            
-        
+
+
         void run()
         {
-            for(auto generation=0; generation < generations; ++generation)
+            for(auto generation=0U; generation < generations; ++generation)
             {
-                for(auto i=0; i < popSize; ++i)
+                for(auto i=0U; i < popSize; ++i)
                 {
                     population.push_back(generator());
                 }
@@ -170,13 +224,13 @@ namespace evolve
             }
         }
 
-                        
+
         void setPopulation(const std::array<genomeType, popSize>& _population) {
             population = _population;
         }
 
         std::array<genomeType, popSize>& getPopulation() const {return population;}
-        
+
     protected:
         std::vector<genomeType> population;
         Generator<genomeType> generator;
@@ -187,7 +241,8 @@ namespace evolve
         std::function<void(std::vector<genomeType>&,
                            std::function<float(const genomeType&)>)> selector;
 
-        unsigned long generations;        
+        unsigned long generations;
     };
 }
 
+#endif

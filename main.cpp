@@ -12,11 +12,12 @@ int foo()
 
 int main()
 {
-    srand(time(NULL));
-    typedef ListGenome::List1D<int> genome;
 
-    Generator<genome> generator(foo, 30);
-    
+    srand(time(NULL));
+    typedef std::vector<int> genome;
+
+    Generator<genome> generator(foo, 5);
+
     SimpleGA<genome, 400> ga(generator,
                              ListGenome::Evaluator::sum<genome>,
                              ListGenome::Crossover::singlePoint<genome>,
@@ -25,6 +26,7 @@ int main()
                              10);
 
     ga.run();
-    
+
+    std::cout << has_insert<ListGenome::List1DFixed<int, 5>>::value << std::endl;
     return 0;
 }
