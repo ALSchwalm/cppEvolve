@@ -1,6 +1,7 @@
 
 #include "cppEvolve.hpp"
 #include <ctime>
+#include <list>
 
 using namespace evolve;
 
@@ -14,7 +15,7 @@ int main()
 {
 
     srand(time(NULL));
-    typedef std::vector<int> genome;
+    typedef std::array<int, 5> genome;
 
     Generator<genome> generator(foo, 5);
 
@@ -27,6 +28,5 @@ int main()
 
     ga.run();
 
-    std::cout << has_insert<ListGenome::List1DFixed<int, 5>>::value << std::endl;
     return 0;
 }

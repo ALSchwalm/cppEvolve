@@ -31,7 +31,7 @@ namespace evolve
         genome operator()() {
             genome g;
 
-            for(auto i=0U; i < num; i++) {
+            for (auto i=0U; i < num; i++) {
                 g.insert(g.end(), gen());
             }
 
@@ -46,19 +46,19 @@ namespace evolve
 
 
     template<typename genome>
-    class Generator<genome, typename std::enable_if<!has_insert<genome>::value>::type >
+    class Generator<genome, typename std::enable_if<!has_insert<genome>::value>::type>
     {
     public:
         typedef typename genome::value_type allele;
         Generator(std::function<allele(void)> _gen,
-              unsigned int _num) :
+                unsigned int _num) :
             gen(_gen),
             num(_num){}
 
         genome operator()() {
             genome g;
 
-            for(auto i=0U; i < num; i++) {
+            for (auto i=0U; i < num; i++) {
                 g[i] = gen();
             }
 
@@ -68,7 +68,6 @@ namespace evolve
     protected:
         std::function<allele(void)> gen;
         unsigned int num;
-
     };
 
 
@@ -118,9 +117,33 @@ namespace evolve
 
         namespace Crossover
         {
+
             template<typename genome>
-            inline genome singlePoint(const genome& g1,
-                                      const genome& g2)
+            typename std::enable_if<!has_insert<genome>::value, genome>::type
+            singlePoint(const genome& g1,
+                        const genome& g2)
+            {
+                genome g;
+
+                auto size = std::min(g1.size(), g2.size());
+                auto location = rand() % size;
+
+                for (auto i=0U; i < size; ++i)
+                {
+                    if (i <= location)
+                        g[i] = g1[i];
+                    else
+                        g[i] = g2[i];
+                }
+
+                return g;
+            }
+
+
+            template<typename genome>
+            typename std::enable_if<has_insert<genome>::value, genome>::type
+            singlePoint(const genome& g1,
+                        const genome& g2)
             {
                 genome g;
 
@@ -136,14 +159,14 @@ namespace evolve
                 g.insert(g.begin(), g1.begin(), g1location);
                 g.insert(g.end(), g2location, g2.end());
                 return g;
-
             }
         }
 
         namespace Mutator
         {
+
             template<typename genome>
-            typename std::enable_if<has_slicing<genome>::value, void>::type
+            typename std::enable_if<has_indexing<genome>::value>::type
                 swap(genome& g)
             {
                 unsigned int s1 = rand() % g.size();
@@ -153,7 +176,7 @@ namespace evolve
             }
 
             template<typename genome>
-            typename std::enable_if<!has_slicing<genome>::value, void>::type
+            typename std::enable_if<!has_indexing<genome>::value>::type
                 swap(genome& g)
             {
                 unsigned int s1 = rand() % g.size();

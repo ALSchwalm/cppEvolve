@@ -5,7 +5,7 @@
 
 namespace evolve {
 
-template<typename>
+    template<typename>
     struct sfinae_true : std::true_type{};
 
     #define HAS_MEMBER(func, name)                                                      \
@@ -20,8 +20,13 @@ template<typename>
         struct name : decltype(name ## _test<T>(0)){};
 
 
-    HAS_MEMBER(operator[](0), has_slicing)
-    HAS_MEMBER(insert(nullptr, std::declval<T>()), has_insert)
+    HAS_MEMBER(operator[](0), has_indexing);
+
+    HAS_MEMBER(push_back(std::declval<typename T::value_type>()), has_pushback);
+
+    HAS_MEMBER(insert(std::declval<typename T::iterator>(),
+                      std::declval<typename T::iterator>(),
+                      std::declval<typename T::iterator>()), has_insert);
 
 }
 #endif
