@@ -17,7 +17,7 @@ int main()
     srand(time(NULL));
     typedef std::array<int, 5> genome;
 
-    Generator<genome> generator(foo, 5);
+    Generator<genome> generator(foo);
 
     SimpleGA<genome, 400> ga(generator,
                              ListGenome::Evaluator::sum<genome>,

@@ -50,15 +50,13 @@ namespace evolve
     {
     public:
         typedef typename genome::value_type allele;
-        Generator(std::function<allele(void)> _gen,
-                unsigned int _num) :
-            gen(_gen),
-            num(_num){}
+        Generator(std::function<allele(void)> _gen) :
+            gen(_gen){}
 
         genome operator()() {
             genome g;
 
-            for (auto i=0U; i < num; i++) {
+            for (auto i=0U; i < g.size(); i++) {
                 g[i] = gen();
             }
 
@@ -67,7 +65,6 @@ namespace evolve
 
     protected:
         std::function<allele(void)> gen;
-        unsigned int num;
     };
 
 
