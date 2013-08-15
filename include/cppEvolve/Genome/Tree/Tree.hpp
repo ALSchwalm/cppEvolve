@@ -23,6 +23,9 @@ namespace evolve
 
             const std::string& getName() const {return name;}
 
+            template<typename T>
+            friend std::ostream& operator<< (std::ostream &out, const BaseNode<T>& node);
+
         protected:
             BaseNode(const std::string& _name) :
                 name(_name){}
@@ -86,7 +89,6 @@ namespace evolve
                 return 0;
             }
 
-
         private:
             genome val;
         };
@@ -108,8 +110,19 @@ namespace evolve
         template<typename T>
         std::ostream& operator<< (std::ostream &out, const Tree<T>& tree)
         {
+            out << *tree.root;
+            return out;
+        }
 
-            out << tree.root->getName() << "(";
+
+        template<typename T>
+        std::ostream& operator<< (std::ostream &out, const BaseNode<T>& node)
+        {
+            out << node.name << "(";
+
+            for (auto child : node.children)
+                out << *child << ", ";
+            out << ")";
             return out;
         }
 
