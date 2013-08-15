@@ -1,10 +1,22 @@
 
 #include "cppEvolve/cppEvolve.hpp"
 #include "cppEvolve/Genome/List1D/List1D.hpp"
+#include "cppEvolve/Genome/Tree/Tree.hpp"
 #include <ctime>
 #include <cstdlib>
+#include <deque>
+#include <array>
+#include <map>
+#include <set>
+#include <list>
 
 using namespace evolve;
+
+
+int bar(int x, int y)
+{
+    return x + y;
+}
 
 int foo()
 {
@@ -16,7 +28,8 @@ int main()
 {
 
     srand(time(NULL));
-    typedef List1DGenome::List1D<int> genome;
+    /*
+    typedef std::vector<int> genome;
 
     Generator<genome> generator(foo, 5);
 
@@ -28,6 +41,14 @@ int main()
                              10);
 
     ga.run();
+    */
+    Tree::TreeFactory<int> factory;
+    factory.addNode(std::function<int(int, int)>(bar), "bar");
+    factory.addTerminator(std::function<int()>(foo), "foo");
+
+    auto tree = factory.make();
+
+    std::cout << *tree;
 
     return 0;
 }
