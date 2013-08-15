@@ -13,7 +13,7 @@ namespace evolve
     class Generator;
 
     template<typename genome>
-    class Generator<genome, typename std::enable_if<has_insert<genome>::value>::type>
+    class Generator<genome, typename std::enable_if<has_pushback<genome>::value>::type>
     {
     public:
         typedef typename genome::value_type allele;
@@ -26,7 +26,7 @@ namespace evolve
             genome g;
 
             for (auto i=0U; i < num; i++) {
-                g.insert(g.end(), gen());
+                g.push_back(gen());
             }
 
             return g;
@@ -40,7 +40,7 @@ namespace evolve
 
 
     template<typename genome>
-    class Generator<genome, typename std::enable_if<!has_insert<genome>::value>::type>
+    class Generator<genome, typename std::enable_if<!has_pushback<genome>::value>::type>
     {
     public:
         typedef typename genome::value_type allele;

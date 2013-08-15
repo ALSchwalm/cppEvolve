@@ -17,7 +17,7 @@ namespace evolve
         inline void top(std::vector<genome>& population,
                         std::function<float(const genome&)> evaluator)
         {
-            static_assert( num >=2, "Selector must leave at least 2 individuals in the population");
+            static_assert( num >=1, "Selector must leave at least 1 individual in the population");
             assert(population.size() >= num );
 
             std::sort(population.begin(), population.end(),

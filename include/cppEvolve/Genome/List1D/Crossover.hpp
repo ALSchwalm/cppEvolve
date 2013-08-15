@@ -14,7 +14,7 @@ namespace evolve
         namespace Crossover
         {
             template<typename genome>
-            typename std::enable_if<!has_insert<genome>::value, genome>::type
+            typename std::enable_if<!has_range_insert<genome>::value, genome>::type
             singlePoint(const genome& g1,
                         const genome& g2)
             {
@@ -36,7 +36,7 @@ namespace evolve
 
 
             template<typename genome>
-            typename std::enable_if<has_insert<genome>::value, genome>::type
+            typename std::enable_if<has_range_insert<genome>::value, genome>::type
             singlePoint(const genome& g1,
                         const genome& g2)
             {
