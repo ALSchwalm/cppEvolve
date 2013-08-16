@@ -98,10 +98,16 @@ namespace evolve
             Tree(BaseNode<rType>* _root) :
                 root(_root){}
 
-            BaseNode<rType>* root;
+            rType eval() const {
+                return root->eval();
+            }
 
             template<typename T>
             friend std::ostream& operator<< (std::ostream &out, const Tree<T>& tree);
+
+            BaseNode<rType>* root;
+        protected:
+
         };
 
         template<typename T>

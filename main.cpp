@@ -18,10 +18,15 @@ int bar(int x, int y)
     return x + y;
 }
 
-int foo()
+int get5()
 {
-    return rand() % 20;
+    return 5;
 };
+
+int get7()
+{
+    return 7;
+}
 
 
 int main()
@@ -44,11 +49,14 @@ int main()
     */
     Tree::TreeFactory<int> factory;
     factory.addNode(std::function<int(int, int)>(bar), "bar");
-    factory.addTerminator(std::function<int()>(foo), "foo");
+    factory.addTerminator(std::function<int()>(get5), "5");
+    factory.addTerminator(std::function<int()>(get7), "7");
 
     auto tree = factory.make();
 
-    std::cout << *tree;
+    std::cout << *tree << std::endl;
+
+    std::cout << "Eval: " << tree->eval() << std::endl;
 
     return 0;
 }
