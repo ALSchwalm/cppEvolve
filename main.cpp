@@ -2,6 +2,7 @@
 #include "cppEvolve/cppEvolve.hpp"
 #include "cppEvolve/Genome/List1D/List1D.hpp"
 #include "cppEvolve/Genome/Tree/Tree.hpp"
+#include "cppEvolve/Genome/Tree/Mutator.hpp"
 #include <ctime>
 #include <cstdlib>
 #include <deque>
@@ -62,6 +63,13 @@ int main()
     std::cout << *tree << std::endl;
 
     std::cout << "Eval: " << tree->eval() << std::endl;
+
+    Tree::Mutator::randomNode(tree, factory);
+
+    std::cout << *tree << std::endl;
+
+    std::cout << "Eval: " << tree->eval() << std::endl;
+    std::cout << tree->getDepth();
 
     return 0;
 }

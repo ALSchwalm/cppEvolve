@@ -38,13 +38,13 @@ namespace evolve
 
         void run()
         {
+            for(auto i=0U; i < popSize; ++i)
+            {
+                population.push_back(generator());
+            }
+
             for(auto generation=0U; generation < generations; ++generation)
             {
-                for(auto i=0U; i < popSize; ++i)
-                {
-                    population.push_back(generator());
-                }
-
                 selector(population, evaluator);
 
                 while(population.size() < popSize) {

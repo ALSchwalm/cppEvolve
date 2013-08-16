@@ -3,6 +3,9 @@
 
 #include "cppEvolve/utils.hpp"
 #include <map>
+#include <string>
+#include <algorithm>
+#include <iostream>
 
 namespace evolve
 {
@@ -13,11 +16,29 @@ namespace evolve
         class BaseNode
         {
         public:
-            virtual ~BaseNode(){};
+            virtual ~BaseNode()
+            {
+                for (auto child : this->children)
+                {
+                    delete child;
+                }
+            };
+
             virtual rtype eval()=0;
 
             std::vector<BaseNode<rtype>*>& getChildren() {
                 return children;
+            }
+
+            unsigned int getDepth() const {
+                unsigned int max = 0;
+                for (auto child : children)
+                {
+                    auto depth = child->getDepth();
+                    if (depth > max)
+                        max = depth;
+                }
+                return max+1;
             }
 
             virtual unsigned int getNumChildren() const =0;
@@ -49,7 +70,9 @@ namespace evolve
             {
             }
 
-            virtual ~Node(){}
+            virtual ~Node()
+            {
+            }
 
             virtual typename genome::result_type eval() override
             {
@@ -106,6 +129,11 @@ namespace evolve
             rType eval() const {
                 return root->eval();
             }
+
+            unsigned int getDepth() {
+                return root->getDepth();
+            }
+
 
             template<typename T>
             friend std::ostream& operator<< (std::ostream &out, const Tree<T>& tree);
@@ -167,24 +195,15 @@ namespace evolve
 
             Tree<rType>* make()
             {
-                assert(!terminators.empty());
-                auto tree = new Tree<rType>(createRandomNode());
-
-                for (unsigned int i=0; i < tree->root->getNumChildren(); ++i)
-                {
-                    BaseNode<rType>* node = createRandomNode();
-                    tree->root->getChildren().push_back(node);
-                    for (unsigned int i=0; i < node->getNumChildren(); ++i)
-                    {
-                        node->getChildren().push_back(createRandomTerminator());
-                    }
-                }
+                assert(!terminators.empty() && !nodes.empty());
+                auto tree = new Tree<rType>(createRandomSubTree());
 
                 return tree;
             }
 
 
-            BaseNode<rType>* copyNode(const BaseNode<rType>* node) {
+            BaseNode<rType>* copyNode(const BaseNode<rType>* node) const
+            {
                 if (nodes.find(node->getID()) != nodes.end())
                 {
                     return nodes[node->getID()]();
@@ -195,10 +214,15 @@ namespace evolve
                 }
             }
 
-        protected:
-            unsigned int currentID;
-            std::map<unsigned int, std::function<BaseNode<rType>*()>> nodes;
-            std::map<unsigned int, std::function<BaseNode<rType>*()>> terminators;
+            BaseNode<rType>* copySubTree(const BaseNode<rType>* node) const
+            {
+                auto root = copyNode(node);
+                for (auto child : node->getChildren())
+                {
+                    root->getChildren().push_back(copySubTree(child));
+                }
+                return root;
+            }
 
             BaseNode<rType>* createRandomNode() const {
                 auto loc = nodes.begin();
@@ -211,6 +235,30 @@ namespace evolve
                 std::advance(loc, rand() % terminators.size());
                 return ((*loc).second)();
             }
+
+            BaseNode<rType>* createRandomSubTree(unsigned int depth=5) const {
+
+                BaseNode<rType>* root = nullptr;
+
+                if (depth == 0) {
+                    root = createRandomTerminator();
+                }
+                else {
+                    root = createRandomNode();
+                    for (unsigned int i=0; i < root->getNumChildren(); ++i)
+                    {
+                        root->getChildren().push_back(createRandomSubTree(depth-1));
+                    }
+                }
+                return root;
+            }
+
+
+
+        protected:
+            unsigned int currentID;
+            std::map<unsigned int, std::function<BaseNode<rType>*()>> nodes;
+            std::map<unsigned int, std::function<BaseNode<rType>*()>> terminators;
 
         };
     }
