@@ -38,9 +38,6 @@ namespace evolve
         class Node : public BaseNode<typename genome::result_type>
         {
         public:
-
-            typedef typename genome::result_type result;
-
             Node(genome g, const std::string& _name) :
                 BaseNode<typename genome::result_type>(_name),
                 val(g)
@@ -120,8 +117,12 @@ namespace evolve
         {
             out << node.name << "(";
 
-            for (auto child : node.children)
-                out << *child << ", ";
+            if (!node.children.empty()) {
+                for (unsigned int i=0; i < node.children.size()-1; ++i)
+                    out << *(node.children[i]) << ", ";
+
+                out << *node.children[node.children.size()-1];
+            }
             out << ")";
             return out;
         }
@@ -137,26 +138,33 @@ namespace evolve
             void addNode(std::function<rType(T...)> f, const std::string& name)
             {
                 static_assert(sizeof...(T) > 0, "Node function with 0 arguments should be terminator");
-                nodes.push_back(new Node<std::function<rType(T...)>>(f, name));
+
+                std::function<BaseNode<rType>*()> func = [=]() {
+                    return new Node<std::function<rType(T...)>>(f, name);
+                };
+                nodes.push_back(func);
             }
 
             void addTerminator(std::function<rType()> f, const std::string& name)
             {
-                terminators.push_back(new Terminator<std::function<rType()>>(f, name));
+                std::function<BaseNode<rType>*()> func = [=]() {
+                    return new Terminator<std::function<rType()>>(f, name);
+                };
+                terminators.push_back(func);
             }
 
             Tree<rType>* make()
             {
                 assert(!terminators.empty());
-                auto tree = new Tree<rType>(getRandomNode());
+                auto tree = new Tree<rType>(createRandomNode());
 
                 for (unsigned int i=0; i < tree->root->getNumChildren(); ++i)
                 {
-                    BaseNode<rType>* node = getRandomNode();
+                    BaseNode<rType>* node = createRandomNode();
                     tree->root->getChildren().push_back(node);
                     for (unsigned int i=0; i < node->getNumChildren(); ++i)
                     {
-                        tree->root->getChildren().push_back(getRandomTerminator());
+                        node->getChildren().push_back(createRandomTerminator());
                     }
                 }
 
@@ -164,15 +172,15 @@ namespace evolve
             }
 
         protected:
-            std::vector<BaseNode<rType>*> nodes;
-            std::vector<BaseNode<rType>*> terminators;
+            std::vector<std::function<BaseNode<rType>*()>> nodes;
+            std::vector<std::function<BaseNode<rType>*()>> terminators;
 
-            BaseNode<rType>* getRandomNode() const {
-                return nodes[rand() % nodes.size()];
+            BaseNode<rType>* createRandomNode() const {
+                return nodes[rand() % nodes.size()]();
             }
 
-            BaseNode<rType>* getRandomTerminator() const {
-                return terminators[rand() % terminators.size()];
+            BaseNode<rType>* createRandomTerminator() const {
+                return terminators[rand() % terminators.size()]();
             }
 
         };
