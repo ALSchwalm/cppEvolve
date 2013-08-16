@@ -31,10 +31,10 @@ namespace evolve
 
     template<unsigned int... ints, unsigned int head>
     struct RangeHelper<Ints<head, ints...>, false> :
-        public RangeHelper<Ints<head-1, head, ints...>, head-1==1>{};
+        public RangeHelper<Ints<head-1, head, ints...>, head-1==0>{};
 
     template<unsigned int bound>
-    struct Range : public RangeHelper<Ints<bound>, bound==1>{};
+    struct Range : public RangeHelper<Ints<bound>, bound==0>{};
 
 
     template <typename T>
@@ -50,7 +50,7 @@ namespace evolve
         template <typename FuncType>
         static T eval(FuncType f, const std::vector<T>& args){
             assert(args.size() == count_args<FuncType>::value); // just to be sure
-            return call(f, args, typename Range<count_args<FuncType>::value>::type{});
+            return call(f, args, typename Range<count_args<FuncType>::value-1>::type{});
         }
     };
 

@@ -141,7 +141,7 @@ namespace evolve
             TreeFactory(){}
 
             template<typename... T>
-            void addNode(std::function<rType(T...)> f, const std::string& name)
+            void addNode(rType(*f)(T...), const std::string& name)
             {
                 static_assert(sizeof...(T) > 0, "Node function with 0 arguments should be terminator");
 
@@ -151,7 +151,7 @@ namespace evolve
                 nodes.push_back(func);
             }
 
-            void addTerminator(std::function<rType()> f, const std::string& name)
+            void addTerminator(rType(*f)(), const std::string& name)
             {
                 std::function<BaseNode<rType>*()> func = [=]() {
                     return new Terminator<std::function<rType()>>(f, name);

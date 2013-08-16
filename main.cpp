@@ -13,7 +13,7 @@
 using namespace evolve;
 
 
-int bar(int x, int y)
+int sum(int x, int y)
 {
     return x + y;
 }
@@ -48,9 +48,9 @@ int main()
     ga.run();
     */
     Tree::TreeFactory<int> factory;
-    factory.addNode(std::function<int(int, int)>(bar), "bar");
-    factory.addTerminator(std::function<int()>(get5), "5");
-    factory.addTerminator(std::function<int()>(get7), "7");
+    factory.addNode(sum, "sum");
+    factory.addTerminator(get5, "5");
+    factory.addTerminator(get7, "7");
 
     auto tree = factory.make();
 
