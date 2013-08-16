@@ -13,22 +13,27 @@
 using namespace evolve;
 
 
-int sum(int x, int y)
+namespace functions
 {
-    return x + y;
+    int x =100;
+
+    int sum(int x, int y)
+    {
+        return x + y;
+    }
+
+    int get5()
+    {
+        return 5;
+    };
+
+    int getX()
+    {
+        return functions::x;
+    }
 }
 
-int get5()
-{
-    return 5;
-};
-
-int get7()
-{
-    return 7;
-}
-
-
+using namespace functions;
 int main()
 {
 
@@ -50,7 +55,7 @@ int main()
     Tree::TreeFactory<int> factory;
     factory.addNode(sum, "sum");
     factory.addTerminator(get5, "5");
-    factory.addTerminator(get7, "7");
+    factory.addTerminator(getX, "X");
 
     auto tree = factory.make();
 

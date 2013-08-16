@@ -121,15 +121,16 @@ namespace evolve
         template<typename T>
         std::ostream& operator<< (std::ostream &out, const BaseNode<T>& node)
         {
-            out << node.name << "(";
+            out << node.name;
 
             if (!node.children.empty()) {
+                out << "(";
                 for (unsigned int i=0; i < node.children.size()-1; ++i)
                     out << *(node.children[i]) << ", ";
 
                 out << *node.children[node.children.size()-1];
+                out << ")";
             }
-            out << ")";
             return out;
         }
 
