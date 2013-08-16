@@ -2,6 +2,7 @@
 #define CPPEVOLVE_TREE_H_
 
 #include "cppEvolve/utils.hpp"
+#include <map>
 
 namespace evolve
 {
@@ -23,14 +24,18 @@ namespace evolve
 
             const std::string& getName() const {return name;}
 
+            unsigned int getID() const {return ID;}
+
             template<typename T>
             friend std::ostream& operator<< (std::ostream &out, const BaseNode<T>& node);
 
         protected:
-            BaseNode(const std::string& _name) :
-                name(_name){}
+            BaseNode(const std::string& _name, unsigned int _ID) :
+                name(_name),
+                ID(_ID){}
             std::vector<BaseNode<rtype>*> children;
             const std::string name;
+            const unsigned int ID;
         };
 
 
@@ -38,8 +43,8 @@ namespace evolve
         class Node : public BaseNode<typename genome::result_type>
         {
         public:
-            Node(genome g, const std::string& _name) :
-                BaseNode<typename genome::result_type>(_name),
+            Node(genome g, const std::string& _name, unsigned int _ID) :
+                BaseNode<typename genome::result_type>(_name, _ID),
                 val(g)
             {
             }
@@ -72,8 +77,8 @@ namespace evolve
         public:
             static_assert(count_args<genome>::value == 0, "The number of arguments for a terminator must be 0");
 
-            Terminator(genome g, const std::string& _name) :
-                BaseNode<typename genome::result_type>(_name),
+            Terminator(genome g, const std::string& _name, unsigned int _ID) :
+                BaseNode<typename genome::result_type>(_name, _ID),
                 val(g){}
 
             virtual ~Terminator(){}
@@ -128,8 +133,7 @@ namespace evolve
                 for (unsigned int i=0; i < node.children.size()-1; ++i)
                     out << *(node.children[i]) << ", ";
 
-                out << *node.children[node.children.size()-1];
-                out << ")";
+                out << *node.children[node.children.size()-1] << ")";
             }
             return out;
         }
@@ -139,7 +143,8 @@ namespace evolve
         class TreeFactory
         {
         public:
-            TreeFactory(){}
+            TreeFactory() :
+                currentID(0){}
 
             template<typename... T>
             void addNode(rType(*f)(T...), const std::string& name)
@@ -147,17 +152,17 @@ namespace evolve
                 static_assert(sizeof...(T) > 0, "Node function with 0 arguments should be terminator");
 
                 std::function<BaseNode<rType>*()> func = [=]() {
-                    return new Node<std::function<rType(T...)>>(f, name);
+                    return new Node<std::function<rType(T...)>>(f, name, currentID);
                 };
-                nodes.push_back(func);
+                nodes[currentID++] = func;
             }
 
             void addTerminator(rType(*f)(), const std::string& name)
             {
                 std::function<BaseNode<rType>*()> func = [=]() {
-                    return new Terminator<std::function<rType()>>(f, name);
+                    return new Terminator<std::function<rType()>>(f, name, currentID);
                 };
-                terminators.push_back(func);
+                terminators[currentID++] = func;
             }
 
             Tree<rType>* make()
@@ -178,16 +183,33 @@ namespace evolve
                 return tree;
             }
 
+
+            BaseNode<rType>* copyNode(const BaseNode<rType>* node) {
+                if (nodes.find(node->getID()) != nodes.end())
+                {
+                    return nodes[node->getID()]();
+                }
+                else
+                {
+                    return terminators[node->getID()]();
+                }
+            }
+
         protected:
-            std::vector<std::function<BaseNode<rType>*()>> nodes;
-            std::vector<std::function<BaseNode<rType>*()>> terminators;
+            unsigned int currentID;
+            std::map<unsigned int, std::function<BaseNode<rType>*()>> nodes;
+            std::map<unsigned int, std::function<BaseNode<rType>*()>> terminators;
 
             BaseNode<rType>* createRandomNode() const {
-                return nodes[rand() % nodes.size()]();
+                auto loc = nodes.begin();
+                std::advance(loc, rand() % nodes.size());
+                return ((*loc).second)();
             }
 
             BaseNode<rType>* createRandomTerminator() const {
-                return terminators[rand() % terminators.size()]();
+                auto loc = terminators.begin();
+                std::advance(loc, rand() % terminators.size());
+                return ((*loc).second)();
             }
 
         };
