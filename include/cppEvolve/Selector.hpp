@@ -27,9 +27,9 @@ namespace evolve
                           return evaluator(left) > evaluator(right);
                       });
 
-            auto start = population.begin();
-            std::advance(start, num);
-            population.erase(start, population.end());
+            auto location = population.begin();
+            std::advance(location, num);
+            population.erase(location, population.end());
         }
     }
 }

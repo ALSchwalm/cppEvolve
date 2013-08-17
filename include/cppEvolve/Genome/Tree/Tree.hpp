@@ -265,12 +265,10 @@ namespace evolve
                 return root;
             }
 
-//TODO move this to protected
+        protected:
             unsigned int currentID;
             std::map<unsigned int, std::function<BaseNode<rType>*()>> nodes;
             std::map<unsigned int, std::function<BaseNode<rType>*()>> terminators;
-        protected:
-
 
         };
     }
