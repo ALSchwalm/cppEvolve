@@ -80,12 +80,7 @@ namespace evolve
 
             virtual typename genome::result_type eval() override
             {
-                std::vector<typename genome::result_type> results;
-
-                std::for_each(this->children.begin(), this->children.end(),
-                        [&](BaseNode<typename genome::result_type>* child){results.push_back(child->eval());});
-
-                return unpack_caller<typename genome::result_type>::eval(val, results);
+                return unpack_caller<typename genome::result_type>::eval(val, this->children);
             }
 
             virtual unsigned int getNumChildren() const override
