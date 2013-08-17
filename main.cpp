@@ -3,6 +3,7 @@
 #include "cppEvolve/Genome/List1D/List1D.hpp"
 #include "cppEvolve/Genome/Tree/Tree.hpp"
 #include "cppEvolve/Genome/Tree/Mutator.hpp"
+#include "cppEvolve/Genome/Tree/Crossover.hpp"
 #include <ctime>
 #include <cstdlib>
 #include <deque>
@@ -59,17 +60,18 @@ int main()
     factory.addTerminator(getX, "X");
 
     auto tree = factory.make();
+    auto tree2 = factory.make();
 
     std::cout << *tree << std::endl;
 
     std::cout << "Eval: " << tree->eval() << std::endl;
 
-    Tree::Mutator::randomNode(tree, factory);
+    auto result = Tree::Crossover::singlePointCrossover(tree, tree2, factory);
 
-    std::cout << *tree << std::endl;
+    std::cout << *result << std::endl;
 
-    std::cout << "Eval: " << tree->eval() << std::endl;
-    std::cout << tree->getDepth();
+    std::cout << "Eval: " << result->eval() << std::endl;
+    std::cout << result->getDepth();
 
     return 0;
 }
