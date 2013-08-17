@@ -20,27 +20,23 @@ namespace evolve
 
                 for (unsigned int i=0; i < depth; ++i)
                 {
+                    prevNode = currentNode;
+                    auto nodeLocation = rand() % currentNode->getChildren().size();
+                    currentNode = currentNode->getChildren()[nodeLocation];
+
                     if (currentNode->getChildren().empty()) {
                         auto& children = prevNode->getChildren();
-                        auto location = std::find(children.begin(), children.end(), currentNode);
-
                         delete currentNode;
-                        *location = factory.createRandomNode();
+                        children[nodeLocation] = factory.createRandomTerminator();
                         return;
                     }
-                    else {
-                        prevNode = currentNode;
-                        currentNode = currentNode->getChildren()[rand() % currentNode->getChildren().size()];
-                    }
                 }
 
-                if (!currentNode->getChildren().empty()) {
-                    auto childValue = rand() % currentNode->getChildren().size();
-                    delete currentNode->getChildren()[childValue];
+                auto childValue = rand() % currentNode->getChildren().size();
+                auto nodeDepth = currentNode->getChildren()[childValue]->getDepth();
+                delete currentNode->getChildren()[childValue];
 
-                    currentNode->getChildren()[childValue] = factory.createRandomSubTree(treeDepth - depth);
-                }
-
+                currentNode->getChildren()[childValue] = factory.createRandomSubTree(nodeDepth-1);
             }
         }
     }

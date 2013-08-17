@@ -36,25 +36,20 @@ namespace evolve
 
                 for (unsigned int i=0; i < depth; ++i)
                 {
-                    if (currentNode->getChildren().empty()) {
+                    prevNode = currentNode;
+                    auto nextNodeLocation = rand() % currentNode->getChildren().size();
+                    currentNode = currentNode->getChildren()[nextNodeLocation];
+
+                    if (sourceNode->getDepth() == currentNode->getDepth())
+                    {
                         auto& children = prevNode->getChildren();
-                        auto location = std::find(children.begin(), children.end(), currentNode);
-
                         delete currentNode;
-                        *location = factory.copySubTree(sourceNode);
-                        break;
+                        children[nextNodeLocation] = factory.copySubTree(sourceNode);
+                        return tree;
                     }
-                    else {
-                        prevNode = currentNode;
-                        currentNode = currentNode->getChildren()[rand() % currentNode->getChildren().size()];
+                    else if (currentNode->getChildren().empty()) {
+                        return tree;
                     }
-                }
-
-                if (!currentNode->getChildren().empty()) {
-                    auto childValue = rand() % currentNode->getChildren().size();
-                    delete currentNode->getChildren()[childValue];
-
-                    currentNode->getChildren()[childValue] = factory.copySubTree(sourceNode);
                 }
 
                 return tree;

@@ -43,7 +43,7 @@ namespace evolve
     private:
         template <typename FuncType, unsigned int... I>
         static T call(FuncType f, const std::vector<T>& args, Ints<I...>){
-            return f(args[I]...);
+            return f(args.at(I)...);
         }
 
     public:

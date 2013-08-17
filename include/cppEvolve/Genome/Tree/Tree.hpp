@@ -180,7 +180,8 @@ namespace evolve
         class TreeFactory
         {
         public:
-            TreeFactory() :
+            TreeFactory(unsigned int _depth=5) :
+                depth(_depth),
                 currentID(0){}
 
             template<typename... T>
@@ -206,7 +207,7 @@ namespace evolve
             Tree<rType>* make() const
             {
                 assert(!terminators.empty() && !nodes.empty());
-                auto tree = new Tree<rType>(createRandomSubTree());
+                auto tree = new Tree<rType>(createRandomSubTree(depth));
 
                 return tree;
             }
@@ -266,6 +267,7 @@ namespace evolve
             }
 
         protected:
+            unsigned int depth;
             unsigned int currentID;
             std::map<unsigned int, std::function<BaseNode<rType>*()>> nodes;
             std::map<unsigned int, std::function<BaseNode<rType>*()>> terminators;

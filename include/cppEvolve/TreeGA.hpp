@@ -57,6 +57,7 @@ namespace evolve
                                                    generator));
                 }
 
+
                 for(auto member : population) {
                     mutator(member, generator);
                 }
