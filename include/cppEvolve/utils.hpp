@@ -41,14 +41,14 @@ namespace evolve
     struct unpack_caller
     {
     private:
-        template <typename FuncType, unsigned int... I>
-        static T call(FuncType f, const std::vector<T>& args, Ints<I...>){
-            return f(args.at(I)...);
+        template <typename FuncType, typename U, unsigned int... I>
+        static T call(FuncType f, const std::vector<U>& args, Ints<I...>){
+            return f(args[I]->eval()...);
         }
 
     public:
-        template <typename FuncType>
-        static T eval(FuncType f, const std::vector<T>& args){
+        template <typename FuncType, typename U>
+        static T eval(FuncType f, const std::vector<U>& args){
             assert(args.size() == count_args<FuncType>::value); // just to be sure
             return call(f, args, typename Range<count_args<FuncType>::value-1>::type{});
         }
