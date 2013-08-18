@@ -14,17 +14,17 @@ namespace evolve
     public:
         TreeGA(Tree::TreeFactory<rType> _generator,
 
-                 const std::function<float(const Tree::Tree<rType>*)>& _evaluator,
+                 std::function<float(const Tree::Tree<rType>*)> _evaluator,
 
-                 const std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
+                 std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
                                                  const Tree::Tree<rType>*,
-                                                 const Tree::TreeFactory<rType>&)>& _crossover,
+                                                 const Tree::TreeFactory<rType>&)> _crossover,
 
-                 const std::function<void(Tree::Tree<rType>*,
-                                    const Tree::TreeFactory<rType>&)>& _mutator,
+                 std::function<void(Tree::Tree<rType>*,
+                                    const Tree::TreeFactory<rType>&)> _mutator,
 
-                 const std::function<void(std::vector<Tree::Tree<rType>*>&,
-                                    std::function<float(const Tree::Tree<rType>*)>)>& _selector,
+                 std::function<void(std::vector<Tree::Tree<rType>*>&,
+                                    std::function<float(const Tree::Tree<rType>*)>)> _selector,
                  unsigned long _generations = 10000UL) :
 
             generator(_generator),
@@ -95,17 +95,17 @@ namespace evolve
         Tree::Tree<rType>* bestIndividual = nullptr;  //Historically best individual
         float bestScore = std::numeric_limits<float>::lowest();
 
-        const std::function<float(const Tree::Tree<rType>*)>& evaluator;
+        std::function<float(const Tree::Tree<rType>*)> evaluator;
 
-        const std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
+        std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
                                         const Tree::Tree<rType>*,
-                                        const Tree::TreeFactory<rType>&)>& crossover;
+                                        const Tree::TreeFactory<rType>&)> crossover;
 
-        const std::function<void(Tree::Tree<rType>*,
-                      const Tree::TreeFactory<rType>&)>& mutator;
+        std::function<void(Tree::Tree<rType>*,
+                      const Tree::TreeFactory<rType>&)> mutator;
 
-        const std::function<void(std::vector<Tree::Tree<rType>*>&,
-                           std::function<float(const Tree::Tree<rType>*)>)>& selector;
+        std::function<void(std::vector<Tree::Tree<rType>*>&,
+                           std::function<float(const Tree::Tree<rType>*)>)> selector;
 
 
         unsigned long generations;

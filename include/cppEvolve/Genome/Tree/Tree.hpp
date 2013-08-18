@@ -24,7 +24,7 @@ namespace evolve
                 }
             };
 
-            virtual rtype eval() const=0;
+            virtual rtype eval()=0;
 
             std::vector<BaseNode<rtype>*>& getChildren() {
                 return children;
@@ -78,7 +78,7 @@ namespace evolve
             {
             }
 
-            virtual typename genome::result_type eval() const override
+            virtual typename genome::result_type eval() override
             {
                 return unpack_caller<typename genome::result_type>::eval(val, this->children);
             }
@@ -105,7 +105,7 @@ namespace evolve
 
             virtual ~Terminator(){}
 
-            virtual typename genome::result_type eval() const override {
+            virtual typename genome::result_type eval() override {
                 return val();
             }
 
@@ -123,8 +123,7 @@ namespace evolve
         {
         public:
             Tree(BaseNode<rType>* _root) :
-                root(_root),
-                value(0){}
+                root(_root){}
 
             ~Tree()
             {
@@ -132,7 +131,7 @@ namespace evolve
             }
 
             rType eval() const {
-                return value;
+                return root->eval();
             }
 
             unsigned int getDepth() const {
@@ -144,7 +143,7 @@ namespace evolve
             friend std::ostream& operator<< (std::ostream &out, const Tree<T>& tree);
 
             BaseNode<rType>* root;
-            rType value;
+        protected:
 
         };
 

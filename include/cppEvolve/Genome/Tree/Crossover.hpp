@@ -52,7 +52,6 @@ namespace evolve
                     }
                 }
 
-                tree->value = tree->root->eval();
                 return tree;
             }
 
