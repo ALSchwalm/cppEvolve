@@ -28,6 +28,7 @@ namespace evolve
                         auto& children = prevNode->getChildren();
                         delete currentNode;
                         children[nodeLocation] = factory.createRandomTerminator();
+                        tree->value = tree->root->eval();
                         return;
                     }
                 }
@@ -37,6 +38,7 @@ namespace evolve
                 delete currentNode->getChildren()[childValue];
 
                 currentNode->getChildren()[childValue] = factory.createRandomSubTree(nodeDepth-1);
+                tree->value = tree->root->eval();
             }
         }
     }
