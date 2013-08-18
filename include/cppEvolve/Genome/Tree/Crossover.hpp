@@ -45,10 +45,10 @@ namespace evolve
                         auto& children = prevNode->getChildren();
                         delete currentNode;
                         children[nextNodeLocation] = factory.copySubTree(sourceNode);
-                        return tree;
+                        break;
                     }
                     else if (currentNode->getChildren().empty()) {
-                        return tree;
+                        break; //This point should never be reached
                     }
                 }
 

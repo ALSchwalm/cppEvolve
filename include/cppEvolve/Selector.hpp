@@ -56,7 +56,7 @@ namespace evolve
 
             for (auto iter = location; iter != population.end(); ++iter)
             {
-                delete (*iter);
+                delete *iter;
             }
 
             population.erase(location, population.end());

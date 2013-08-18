@@ -18,32 +18,27 @@ using namespace evolve;
 
 namespace functions
 {
-    int x =100;
+    int x;
 
     int sum(int x, int y)
     {
-        return x + y;
+        return x+y;
     }
 
-    int average(int x, int y)
+    int times(int x, int y)
     {
-        return (x+y)/2;
+        return x*y;
     }
-
-    int get5()
-    {
-        return 5;
-    };
 
     int getX()
     {
         return functions::x;
     }
 
-    template<typename T>
-    float fitness(const Tree::Tree<T>* tree)
+    double fitness(const Tree::Tree<int>* tree)
     {
-        x=2;
+        x=0;
+
         return tree->eval();
     }
 
@@ -72,42 +67,22 @@ int main()
 
 
 */
-    Tree::TreeFactory<int> factory(6);
+    Tree::TreeFactory<int> factory(4);
     factory.addNode(sum, "sum");
-    factory.addNode(average, "average");
-    factory.addTerminator(get5, "5");
+    factory.addNode(times, "multiply");
+    factory.addTerminator([]{return 5;}, "5");
     factory.addTerminator(getX, "X");
 
-    TreeGA<int> ga(factory,
-                 fitness<int>,
+    TreeGA<int, 40> ga(factory,
+                 fitness,
                  Tree::Crossover::singlePointCrossover<int>,
                  Tree::Mutator::randomNode<int>,
-                 Selector::top<Tree::Tree<int>*, 30>,
+                 Selector::top<Tree::Tree<int>*, 10>,
                  1000);
 
-    ga.run();
+    ga.run(100);
 
 
-/*
-    Tree::TreeFactory<int> factory(6);
-    factory.addNode(sum, "sum");
-    factory.addNode(average, "average");
-    factory.addTerminator(get5, "5");
-    factory.addTerminator(getX, "X");
-    auto tree = factory.make();
-    auto tree2 = factory.make();
 
-    std::cout << *tree << std::endl;
-
-    std::cout << "Eval: " << tree->eval() << std::endl;
-
-    auto result = Tree::Crossover::singlePointCrossover(tree, tree2, factory);
-    Tree::Mutator::randomNode(result, factory);
-
-    std::cout << *result << std::endl;
-
-    std::cout << "Eval: " << result->eval() << std::endl;
-    std::cout << result->getDepth();
-    */
     return 0;
 }

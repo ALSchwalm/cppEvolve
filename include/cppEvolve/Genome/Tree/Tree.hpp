@@ -24,7 +24,7 @@ namespace evolve
                 }
             };
 
-            virtual rtype eval()=0;
+            virtual rtype eval() const=0;
 
             std::vector<BaseNode<rtype>*>& getChildren() {
                 return children;
@@ -78,7 +78,7 @@ namespace evolve
             {
             }
 
-            virtual typename genome::result_type eval() override
+            virtual typename genome::result_type eval() const override
             {
                 return unpack_caller<typename genome::result_type>::eval(val, this->children);
             }
@@ -105,7 +105,7 @@ namespace evolve
 
             virtual ~Terminator(){}
 
-            virtual typename genome::result_type eval() override {
+            virtual typename genome::result_type eval() const override {
                 return val();
             }
 
@@ -143,7 +143,6 @@ namespace evolve
             friend std::ostream& operator<< (std::ostream &out, const Tree<T>& tree);
 
             BaseNode<rType>* root;
-        protected:
 
         };
 
@@ -181,6 +180,17 @@ namespace evolve
 
             template<typename... T>
             void addNode(rType(*f)(T...), const std::string& name)
+            {
+                static_assert(sizeof...(T) > 0, "Node function with 0 arguments should be terminator");
+                const auto val = currentID;
+                std::function<BaseNode<rType>*()> func = [f, name, val]() {     //explicitly capture to avoid bug in gcc
+                    return new Node<std::function<rType(T...)>>(f, name, val);
+                };
+                nodes[currentID++] = func;
+            }
+
+            template<typename... T>
+            void addNode(std::function<rType(T...)> f, const std::string& name)
             {
                 static_assert(sizeof...(T) > 0, "Node function with 0 arguments should be terminator");
                 const auto val = currentID;

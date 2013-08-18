@@ -42,7 +42,7 @@ namespace evolve
     {
     private:
         template <typename FuncType, typename U, unsigned int... I>
-        static T call(FuncType f, const std::vector<U>& args, Ints<I...>){
+        static T call(FuncType f, const std::vector<U>& args, const Ints<I...>&){
             return f(args[I]->eval()...);
         }
 
@@ -70,7 +70,7 @@ namespace evolve
         struct name : decltype(name ## _test<T>(0)){};
 
 
-    HAS_MEMBER(operator[](0), has_indexing);
+    HAS_MEMBER(operator[](std::declval<std::size_t>()), has_indexing);
 
     HAS_MEMBER(push_back(std::declval<typename T::value_type>()), has_pushback);
 

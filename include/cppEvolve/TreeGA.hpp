@@ -24,7 +24,7 @@ namespace evolve
                                     const Tree::TreeFactory<rType>&)> _mutator,
 
                  std::function<void(std::vector<Tree::Tree<rType>*>&,
-                                    std::function<float(const Tree::Tree<rType>*)>)> _selector,
+                                    std::function<double(const Tree::Tree<rType>*)>)> _selector,
                  unsigned long _generations = 10000UL) :
 
             generator(_generator),
@@ -42,7 +42,7 @@ namespace evolve
         }
 
 
-        void run()
+        void run(unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
             {
@@ -61,14 +61,10 @@ namespace evolve
 
 
                 for(auto member : population) {
-                    if (rand() % 100 > 70)
+                    if (rand() % 100 > 60)
                         mutator(member, generator);
                 }
-/*
-                std::cout << "Fitness:" << evaluator(population[0]) << std::endl;
-                std::cout << *population[0];
-                std::cout << std::endl;
-*/
+
                 auto score = evaluator(population[0]);
                 if ( score > bestScore)
                 {
@@ -76,6 +72,12 @@ namespace evolve
                     bestIndividual = new Tree::Tree<rType>(generator.copySubTree(population[0]->root));
                     bestScore = score;
                 }
+
+                if (generation % logFrequency == 0)
+                {
+                    std::cout << "Generation(" << generation << ") - Fitness:" << bestScore << std::endl;
+                }
+
             }
             std::cout << "Best: " << *bestIndividual << std::endl;
             std::cout << "Fitness: " << bestScore << std::endl;
@@ -88,12 +90,14 @@ namespace evolve
 
         std::array<Tree::Tree<rType>*, popSize>& getPopulation() const {return population;}
 
+        const Tree::Tree<rType>* getBest() const {return bestIndividual;}
+
     protected:
         std::vector<Tree::Tree<rType>*> population;
         Tree::TreeFactory<rType> generator;
 
         Tree::Tree<rType>* bestIndividual = nullptr;  //Historically best individual
-        float bestScore = std::numeric_limits<float>::lowest();
+        double bestScore = std::numeric_limits<float>::lowest();
 
         std::function<float(const Tree::Tree<rType>*)> evaluator;
 
@@ -105,7 +109,7 @@ namespace evolve
                       const Tree::TreeFactory<rType>&)> mutator;
 
         std::function<void(std::vector<Tree::Tree<rType>*>&,
-                           std::function<float(const Tree::Tree<rType>*)>)> selector;
+                           std::function<double(const Tree::Tree<rType>*)>)> selector;
 
 
         unsigned long generations;
