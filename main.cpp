@@ -1,4 +1,3 @@
-
 #include "cppEvolve/cppEvolve.hpp"
 #include "cppEvolve/TreeGA.hpp"
 #include "cppEvolve/Genome/List1D/List1D.hpp"
@@ -51,22 +50,22 @@ int main()
 {
 
     srand(time(NULL));
-/*
+
     typedef std::vector<int> genome;
 
-    Generator<genome> generator(get5, 5);
+    Generator<genome> generator([]{return rand();}, 5);
 
     SimpleGA<genome, 400> ga(generator,
                              List1DGenome::Evaluator::sum<genome>,
                              List1DGenome::Crossover::singlePoint<genome>,
                              List1DGenome::Mutator::swap<genome>,
                              Selector::top<genome, 30>,
-                             10);
+                             1000);
 
     ga.run();
 
 
-*/
+/*
     Tree::TreeFactory<int> factory(4);
     factory.addNode(sum, "sum");
     factory.addNode(times, "multiply");
@@ -81,8 +80,6 @@ int main()
                  1000);
 
     ga.run(100);
-
-
-
+*/
     return 0;
 }

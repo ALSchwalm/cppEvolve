@@ -9,9 +9,9 @@ namespace evolve
         namespace Evaluator
         {
             template<typename genome>
-            inline float sum(const genome& g)
+            inline double sum(const genome& g)
             {
-                float total = 0.0f;
+                double total = 0.0f;
                 for(auto allele : g) {
                     total += allele;
                 }
