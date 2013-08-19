@@ -189,17 +189,6 @@ namespace evolve
                 nodes[currentID++] = func;
             }
 
-            template<typename... T>
-            void addNode(std::function<rType(T...)> f, const std::string& name)
-            {
-                static_assert(sizeof...(T) > 0, "Node function with 0 arguments should be terminator");
-                const auto val = currentID;
-                std::function<BaseNode<rType>*()> func = [f, name, val]() {     //explicitly capture to avoid bug in gcc
-                    return new Node<std::function<rType(T...)>>(f, name, val);
-                };
-                nodes[currentID++] = func;
-            }
-
             void addTerminator(rType(*f)(), const std::string& name)
             {
                 const auto val = currentID;

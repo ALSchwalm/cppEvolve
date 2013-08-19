@@ -25,7 +25,7 @@ namespace functions
         return x+y;
     }
 
-    int times(int x, int y)
+    int product(int x, int y)
     {
         return x*y;
     }
@@ -67,9 +67,9 @@ int main()
 
 
 */
-    Tree::TreeFactory<int> factory(4);
+    Tree::TreeFactory<int> factory(5);
     factory.addNode(sum, "sum");
-    factory.addNode(times, "multiply");
+    factory.addNode(product, "product");
     factory.addTerminator([]{return 5;}, "5");
     factory.addTerminator(getX, "X");
 
@@ -78,7 +78,7 @@ int main()
                  Tree::Crossover::singlePointCrossover<int>,
                  Tree::Mutator::randomNode<int>,
                  Selector::top<Tree::Tree<int>*, 10>,
-                 1000);
+                 10000);
 
     ga.run(100);
 

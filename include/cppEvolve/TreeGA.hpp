@@ -54,7 +54,7 @@ namespace evolve
                 selector(population, evaluator);
 
                 while(population.size() < popSize) {
-                    population.push_back(crossover(getRandomIndividual(),
+                    population.push_back(crossover(getRandomIndividual(), //FIXME
                                                    getRandomIndividual(),
                                                    generator));
                 }
