@@ -19,7 +19,7 @@ namespace evolve
                                           const genomeType&)> _crossover,
                  std::function<void(genomeType&)> _mutator,
                  std::function<void(std::vector<genomeType>&,
-                                    std::function<float(const genomeType&)>)> _selector,
+                                    std::function<double(const genomeType&)>)> _selector,
                  unsigned long _generations = 10000UL) :
             generator(_generator),
             evaluator(_evaluator),
@@ -36,7 +36,7 @@ namespace evolve
         }
 
 
-        void run()
+        void run(unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
             {
@@ -56,15 +56,24 @@ namespace evolve
                     mutator(member);
                 }
 
-                std::cout << "Fitness:" << evaluator(population[0]) << std::endl;
-                for(auto allele : population[0])
-                {
-                    std::cout << allele << " ";
-                }
-                std::cout << std::endl;
-            }
-        }
 
+                if (evaluator(population[0]) > bestScore)
+                {
+                    bestMember = population[0];
+                    bestScore = evaluator(population[0]);
+                }
+                
+                if (generation % logFrequency == 0) {
+                    std::cout << "Generation(" << generation << ") - Fitness:" << bestScore << std::endl;
+                }
+            }
+            std::cout << "Best: ";
+            for (auto allele : bestMember)
+            {
+                std::cout << allele << " ";
+            }
+            std::cout << std::endl << "Fitness: " <<  evaluator(bestMember) << std::endl;
+        }
 
         void setPopulation(const std::array<genomeType, popSize>& _population) {
             population = _population;
@@ -73,9 +82,10 @@ namespace evolve
         std::array<genomeType, popSize>& getPopulation() const {return population;}
 
     protected:
+
         std::vector<genomeType> population;
         Generator<genomeType> generator;
-        std::function<float(const genomeType&)> evaluator;
+        std::function<double(const genomeType&)> evaluator;
         std::function<genomeType(const genomeType&,
                                  const genomeType&)> crossover;
         std::function<void(genomeType&)> mutator;
@@ -83,6 +93,10 @@ namespace evolve
                            std::function<float(const genomeType&)>)> selector;
 
         unsigned long generations;
+
+        genomeType bestMember;
+        double bestScore = std::numeric_limits<float>::lowest();
+
     };
 }
 

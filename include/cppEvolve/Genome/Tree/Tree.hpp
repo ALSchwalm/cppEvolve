@@ -54,10 +54,10 @@ namespace evolve
             BaseNode(const std::string& _name, unsigned int _id) :
                 name(_name),
                 ID(_id){}
-
+/*
             BaseNode(const BaseNode<rtype>&)=delete;
             BaseNode<rtype> operator=(const BaseNode<rtype>&)=delete;
-
+*/
             std::vector<BaseNode<rtype>*> children;
             const std::string name;
             const unsigned int ID;
