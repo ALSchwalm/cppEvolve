@@ -37,7 +37,9 @@ namespace evolve
             srand(time(NULL));
         }
 
-        void run(unsigned int logFrequency=100)
+        virtual ~TreeGA(){}
+        
+        virtual void run(unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
             {
@@ -58,7 +60,7 @@ namespace evolve
 
 
                 for(auto member : population) {
-                    if (rand() % 100 > 60)
+                    if (rand() % 10000 > mutationRate*10000)
                         mutator(member, generator);
                 }
 
@@ -85,6 +87,8 @@ namespace evolve
             population = _population;
         }
 
+        void setMutationRate(float rate) {mutationRate = rate;}
+
         std::array<Tree::Tree<rType>*, popSize>& getPopulation() const {return population;}
 
         const Tree::Tree<rType>* getBest() const {return bestIndividual;}
@@ -110,6 +114,7 @@ namespace evolve
 
 
         unsigned long generations;
+        float mutationRate = 0.6f;
     };
 }
 

@@ -55,7 +55,7 @@ int main()
 
     Generator<genome> generator([]{return rand();}, 5);
 
-    SimpleGA<genome, 400> ga(generator,
+    SimpleGA<genome, 100> ga(generator,
                              List1DGenome::Evaluator::sum<genome>,
                              List1DGenome::Crossover::singlePoint<genome>,
                              List1DGenome::Mutator::swap<genome>,
@@ -65,21 +65,22 @@ int main()
     ga.run();
 
 
-/*
+
     Tree::TreeFactory<int> factory(5);
     factory.addNode(sum, "sum");
     factory.addNode(product, "product");
     factory.addTerminator([]{return 5;}, "5");
     factory.addTerminator(getX, "X");
 
-    TreeGA<int, 40> ga(factory,
-                 fitness,
-                 Tree::Crossover::singlePointCrossover<int>,
-                 Tree::Mutator::randomNode<int>,
-                 Selector::top<Tree::Tree<int>*, 10>,
-                 10000);
+    TreeGA<int, 40> gaTree(factory,
+                           fitness,
+                           Tree::Crossover::singlePointCrossover<int>,
+                           Tree::Mutator::randomNode<int>,
+                           Selector::top<Tree::Tree<int>*, 10>,
+                           1000);
 
-    ga.run(100);
-*/
+    gaTree.setMutationRate(0.02f);
+    gaTree.run(100);
+
     return 0;
 }

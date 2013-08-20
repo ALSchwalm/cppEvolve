@@ -31,7 +31,9 @@ namespace evolve
             srand(time(NULL));
         }
 
-        void run(unsigned int logFrequency=100)
+        virtual ~SimpleGA(){}
+
+        virtual void run(unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
             {
@@ -51,7 +53,7 @@ namespace evolve
 
 
                 for(auto member : population) {
-                    if (rand() % 100 > 60)
+                    if (rand() % 10000 > mutationRate*10000)
                         mutator(member);
                 }
 
@@ -74,6 +76,8 @@ namespace evolve
             std::cout << std::endl << "Fitness: " <<  evaluator(bestMember) << std::endl;
         }
 
+        void setMutationRate(float rate){mutationRate = rate;}
+
         void setPopulation(const std::array<genomeType, popSize>& _population) {
             population = _population;
         }
@@ -95,7 +99,7 @@ namespace evolve
 
         genomeType bestMember;
         double bestScore = std::numeric_limits<float>::lowest();
-
+        float mutationRate = 0.6f;
     };
 }
 
