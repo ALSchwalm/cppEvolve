@@ -31,11 +31,6 @@ namespace evolve
             srand(time(NULL));
         }
 
-        genomeType& getRandomIndividual() {
-            return population[rand() % population.size()];
-        }
-
-
         void run(unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
@@ -47,13 +42,17 @@ namespace evolve
             {
                 selector(population, evaluator);
 
+                auto popSizePostSelection = population.size();
+
                 while(population.size() < popSize) {
-                    population.push_back(crossover(getRandomIndividual(),
-                                                   getRandomIndividual()));
+                    population.push_back(crossover(population[rand() % popSizePostSelection],
+                                                   population[rand() % popSizePostSelection]));
                 }
 
+
                 for(auto member : population) {
-                    mutator(member);
+                    if (rand() % 100 > 60)
+                        mutator(member);
                 }
 
 
@@ -62,7 +61,7 @@ namespace evolve
                     bestMember = population[0];
                     bestScore = evaluator(population[0]);
                 }
-                
+
                 if (generation % logFrequency == 0) {
                     std::cout << "Generation(" << generation << ") - Fitness:" << bestScore << std::endl;
                 }

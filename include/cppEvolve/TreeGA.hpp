@@ -37,11 +37,6 @@ namespace evolve
             srand(time(NULL));
         }
 
-        Tree::Tree<rType>* getRandomIndividual() {
-            return population[rand() % population.size()];
-        }
-
-
         void run(unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
@@ -53,9 +48,11 @@ namespace evolve
             {
                 selector(population, evaluator);
 
+                auto popSizePostSelection = population.size();
+
                 while(population.size() < popSize) {
-                    population.push_back(crossover(getRandomIndividual(), //FIXME
-                                                   getRandomIndividual(),
+                    population.push_back(crossover(population[rand() % popSizePostSelection],
+                                                   population[rand() % popSizePostSelection],
                                                    generator));
                 }
 
