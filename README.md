@@ -16,7 +16,7 @@ For example, functions from the ListGenome namespace must be templated on types 
 
 Once a type has been chosen to represent the genome for a particular algorithm, in most cases the user only needs to construct a "simpleGA" instance with a few functions.
 
-```
+```C++
     typedef std::vector<int> genome;
 
     Generator<genome> generator([]{return rand();}, 5);
