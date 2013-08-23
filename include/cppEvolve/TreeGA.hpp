@@ -17,8 +17,7 @@ namespace evolve
                  std::function<float(const Tree::Tree<rType>*)> _evaluator,
 
                  std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
-                                                 const Tree::Tree<rType>*,
-                                                 const Tree::TreeFactory<rType>&)> _crossover,
+                                                 const Tree::Tree<rType>*)> _crossover,
 
                  std::function<void(Tree::Tree<rType>*,
                                     const Tree::TreeFactory<rType>&)> _mutator,
@@ -38,7 +37,7 @@ namespace evolve
         }
 
         virtual ~TreeGA(){}
-        
+
         virtual void run(unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
@@ -54,8 +53,7 @@ namespace evolve
 
                 while(population.size() < popSize) {
                     population.push_back(crossover(population[rand() % popSizePostSelection],
-                                                   population[rand() % popSizePostSelection],
-                                                   generator));
+                                                   population[rand() % popSizePostSelection]));
                 }
 
 
@@ -68,7 +66,7 @@ namespace evolve
                 if ( score > bestScore)
                 {
                     delete bestIndividual;
-                    bestIndividual = new Tree::Tree<rType>(generator.copySubTree(population[0]->root));
+                    bestIndividual = population[0]->clone();
                     bestScore = score;
                 }
 
@@ -103,8 +101,7 @@ namespace evolve
         std::function<float(const Tree::Tree<rType>*)> evaluator;
 
         std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
-                                        const Tree::Tree<rType>*,
-                                        const Tree::TreeFactory<rType>&)> crossover;
+                                        const Tree::Tree<rType>*)> crossover;
 
         std::function<void(Tree::Tree<rType>*,
                       const Tree::TreeFactory<rType>&)> mutator;

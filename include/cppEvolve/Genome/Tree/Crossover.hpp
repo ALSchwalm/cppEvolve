@@ -10,9 +10,9 @@ namespace evolve
         namespace Crossover
         {
             template<typename T>
-            Tree<T>* singlePointCrossover(const Tree<T>* left, const Tree<T>* right, const TreeFactory<T>& factory)
+            Tree<T>* singlePointCrossover(const Tree<T>* left, const Tree<T>* right)
             {
-                auto tree = new Tree<T>(factory.copySubTree(left->root)); //Copy left
+                auto tree = left->clone(); //Copy left
 
                 auto treeDepth = right->getDepth();
                 auto depth = rand() % treeDepth;
@@ -44,7 +44,7 @@ namespace evolve
                     {
                         auto& children = prevNode->getChildren();
                         delete currentNode;
-                        children[nextNodeLocation] = factory.copySubTree(sourceNode);
+                        children[nextNodeLocation] = sourceNode->clone();
                         break;
                     }
                     else if (currentNode->getChildren().empty()) {

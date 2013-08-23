@@ -41,6 +41,8 @@ namespace evolve
                 return max+1;
             }
 
+            virtual BaseNode<rtype>* clone() const =0;
+
             virtual unsigned int getNumChildren() const =0;
 
             const std::string& getName() const {return name;}
@@ -54,10 +56,7 @@ namespace evolve
             BaseNode(const std::string& _name, unsigned int _id) :
                 name(_name),
                 ID(_id){}
-/*
-            BaseNode(const BaseNode<rtype>&)=delete;
-            BaseNode<rtype> operator=(const BaseNode<rtype>&)=delete;
-*/
+
             std::vector<BaseNode<rtype>*> children;
             const std::string name;
             const unsigned int ID;
@@ -70,12 +69,20 @@ namespace evolve
         public:
             Node(genome g, const std::string& _name, unsigned int _id) :
                 BaseNode<typename genome::result_type>(_name, _id),
-                val(g)
-            {
-            }
+                val(g) {}
 
-            virtual ~Node()
+            Node(const Node<genome>& n) : Node(n.val, n.name, n.ID){}
+
+            virtual ~Node(){}
+
+            virtual BaseNode<typename genome::result_type>* clone() const
             {
+                auto node = new Node<genome>(*this);
+                for (auto child : this->children)
+                {
+                    node->children.push_back(child->clone());
+                }
+                return node;
             }
 
             virtual typename genome::result_type eval() const override
@@ -103,7 +110,19 @@ namespace evolve
                 BaseNode<typename genome::result_type>(_name, _id),
                 val(g){}
 
+            Terminator(const Terminator<genome>& t) : Terminator(t.val, t.name, t.ID){}
+
             virtual ~Terminator(){}
+
+            virtual BaseNode<typename genome::result_type>* clone() const
+            {
+                auto node = new Terminator<genome>(*this);
+                for (auto child : this->children)
+                {
+                    node->children.push_back(child->clone());
+                }
+                return node;
+            }
 
             virtual typename genome::result_type eval() const override {
                 return val();
@@ -128,6 +147,11 @@ namespace evolve
             ~Tree()
             {
                 delete root;
+            }
+
+            Tree<rType>* clone() const
+            {
+                return new Tree<rType>(root->clone());
             }
 
             rType eval() const {
@@ -204,29 +228,6 @@ namespace evolve
                 auto tree = new Tree<rType>(createRandomSubTree(depth));
 
                 return tree;
-            }
-
-
-            BaseNode<rType>* copyNode(const BaseNode<rType>* node) const
-            {
-                if (nodes.find(node->getID()) != nodes.end())
-                {
-                    return nodes.at(node->getID())();
-                }
-                else
-                {
-                    return terminators.at(node->getID())();
-                }
-            }
-
-            BaseNode<rType>* copySubTree(BaseNode<rType>* node) const
-            {
-                auto root = copyNode(node);
-                for (auto child : node->getChildren())
-                {
-                    root->getChildren().push_back(copySubTree(child));
-                }
-                return root;
             }
 
             BaseNode<rType>* createRandomNode() const
