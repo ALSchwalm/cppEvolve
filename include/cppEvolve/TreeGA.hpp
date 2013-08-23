@@ -2,6 +2,8 @@
 #define TREEGA_H_
 
 #include "cppEvolve/Genome/Tree/Tree.hpp"
+#include "cppEvolve/Genome/Tree/Crossover.hpp"
+#include "cppEvolve/Genome/Tree/Mutator.hpp"
 
 #include <limits.h>
 

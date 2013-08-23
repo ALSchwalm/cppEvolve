@@ -1,16 +1,6 @@
 #include "cppEvolve/cppEvolve.hpp"
-#include "cppEvolve/TreeGA.hpp"
 #include "cppEvolve/Genome/List1D/List1D.hpp"
-#include "cppEvolve/Genome/Tree/Tree.hpp"
-#include "cppEvolve/Genome/Tree/Mutator.hpp"
-#include "cppEvolve/Genome/Tree/Crossover.hpp"
-#include <ctime>
-#include <cstdlib>
-#include <deque>
-#include <array>
-#include <map>
-#include <set>
-#include <list>
+#include "cppEvolve/TreeGA.hpp"
 
 using namespace evolve;
 
@@ -34,14 +24,21 @@ namespace functions
         return functions::x;
     }
 
-    double fitness(const Tree::Tree<int>* tree)
+    double treeFitness(const Tree::Tree<int>* tree)
     {
         x=0;
 
         return tree->eval();
     }
 
-
+    double listFitness(const std::vector<int>& g)
+    {
+        double total = 0.0f;
+        for(auto allele : g) {
+            total += allele;
+        }
+        return total;
+    }
 }
 
 using namespace functions;
@@ -55,14 +52,14 @@ int main()
 
     Generator<genome> generator([]{return rand();}, 5);
 
-    SimpleGA<genome, 100> ga(generator,
-                             List1DGenome::Evaluator::sum<genome>,
+    SimpleGA<genome, 100> gaList(generator,
+                             listFitness,
                              List1DGenome::Crossover::singlePoint<genome>,
                              List1DGenome::Mutator::swap<genome>,
                              Selector::top<genome, 30>,
                              1000);
 
-    ga.run();
+    gaList.run();
 
 
 
@@ -73,7 +70,7 @@ int main()
     factory.addTerminator(getX, "X");
 
     TreeGA<int, 40> gaTree(factory,
-                           fitness,
+                           treeFitness,
                            Tree::Crossover::singlePointCrossover<int>,
                            Tree::Mutator::randomNode<int>,
                            Selector::top<Tree::Tree<int>*, 10>,

@@ -54,6 +54,7 @@ namespace evolve
             auto location = population.begin();
             std::advance(location, num);
 
+            //Assume the pointer points to dynamically allocated memory
             for (auto iter = location; iter != population.end(); ++iter)
             {
                 delete *iter;
