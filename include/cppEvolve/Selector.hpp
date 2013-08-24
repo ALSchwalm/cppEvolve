@@ -14,10 +14,11 @@ namespace evolve
 
     namespace Selector
     {
+
         template<typename genome, size_t num>
-        typename std::enable_if<!std::is_pointer<genome>::value>::type
-        top(std::vector<genome>& population,
-                        std::function<float(const genome&)> evaluator)
+        void topHelper(std::vector<genome>& population,
+                       std::function<float(const genome&)> evaluator,
+                       std::false_type genomeIsPointer)
         {
             static_assert( num >=1, "Selector must leave at least 1 individual in the population");
             assert(population.size() >= num );
@@ -29,7 +30,7 @@ namespace evolve
                           return evaluator(left) > evaluator(right);
                       });
 
-            auto location = population.begin();
+            auto location = population.begin();/*!< Detailed description after the member */
             std::advance(location, num);
 
             population.erase(location, population.end());
@@ -37,9 +38,9 @@ namespace evolve
 
 
         template<typename genome, size_t num>
-        typename std::enable_if<std::is_pointer<genome>::value>::type
-        top(std::vector<genome>& population,
-                        std::function<float(const genome&)> evaluator)
+        void topHelper(std::vector<genome>& population,
+                       std::function<float(const genome&)> evaluator,
+                       std::true_type genomeIsPointer)
         {
             static_assert( num >=1, "Selector must leave at least 1 individual in the population");
             assert(population.size() >= num );
@@ -62,6 +63,20 @@ namespace evolve
 
             population.erase(location, population.end());
         }
+
+
+        /*!
+         * Select the top 'num' individuals from the population. If genome is a
+         * pointer, the individuals not selected are deleted.
+         */
+        template<typename genome, size_t num>
+        void top(std::vector<genome>& population,
+                 std::function<float(const genome&)> evaluator)
+        {
+            topHelper<genome, num>(population, evaluator, typename std::is_pointer<genome>::type());
+        }
+
+
     }
 }
 
