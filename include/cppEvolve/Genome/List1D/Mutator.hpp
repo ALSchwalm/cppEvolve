@@ -8,6 +8,10 @@ namespace evolve
 {
     namespace List1DGenome
     {
+
+        /*!
+         *  Contains built-in mutators for list-like genomes
+         */
         namespace Mutator
         {
             namespace details
@@ -37,6 +41,10 @@ namespace evolve
                 }
             }
 
+
+            /*!
+             *  Swaps random alleles in a given genome
+             */
             template<typename genome>
             void swap(genome& g)
             {

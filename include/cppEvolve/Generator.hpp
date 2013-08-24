@@ -8,13 +8,17 @@
 
 namespace evolve
 {
+    /*!
+     * This class is responsible for constructing the genomes used as the initial population in
+     * a SimpleGA.
+     */
     template<typename genome>
     class Generator
     {
     public:
         typedef typename genome::value_type allele;
         Generator(std::function<allele(void)> _gen,
-              unsigned int _num) :
+                  unsigned int _num) :
             gen(_gen),
             num(_num){}
 

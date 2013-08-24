@@ -11,7 +11,9 @@
 
 namespace evolve
 {
-
+    /*!
+     * The namespace for the built in population selectors.
+     */
     namespace Selector
     {
         namespace details

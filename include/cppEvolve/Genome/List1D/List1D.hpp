@@ -3,12 +3,17 @@
 #define LIST1D_H_
 
 #include "Crossover.hpp"
-#include "Evaluator.hpp"
 #include "Mutator.hpp"
 
 
 namespace evolve
 {
+
+    /*!
+     *  Defines Mutators and Crossover functions for list-like structures including
+     *  std::list, vector, deque and array
+     */
+
     namespace List1DGenome
     {
         template <typename T>

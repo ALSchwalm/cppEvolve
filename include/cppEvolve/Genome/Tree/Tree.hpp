@@ -10,9 +10,18 @@
 namespace evolve
 {
 
+    /*!
+     * Contains the definition of the Node and Tree classes used in TreeGA to compose function
+     * trees at runtime.
+     */
     namespace Tree
     {
 
+        /*!
+         * The Node and Terminator classes wrap functions and are used to compose function trees
+         * which are the genome of TreeGAs. The BaseNode class is used to hide the signature of the
+         * wrapped functions.
+         */
         template<typename rtype>
         class BaseNode
         {
@@ -64,6 +73,9 @@ namespace evolve
         };
 
 
+        /*!
+         * The node class wraps functions which take a non-zero number of arguments.
+         */
         template<typename genome>
         class Node : public BaseNode<typename genome::result_type>
         {
@@ -84,6 +96,9 @@ namespace evolve
                 return node;
             }
 
+            /*!
+             * Evaluates all of the child nodes, then calls the wrapped function with the results
+             */
             virtual typename genome::result_type eval() const override
             {
                 return utils::unpack_caller<typename genome::result_type>::eval(val, this->children);
@@ -99,6 +114,10 @@ namespace evolve
         };
 
 
+        /*!
+         * The node class wraps functions which take no arguments. They can be constructed from
+         * lambdas, and are used to 'terminat' the branches of the function tree genome.
+         */
         template<typename genome>
         class Terminator: public BaseNode<typename genome::result_type>
         {
@@ -134,6 +153,9 @@ namespace evolve
         };
 
 
+        /*!
+         * Tree class that is the genome for TreeGA
+         */
         template<typename rType>
         class Tree
         {
@@ -151,6 +173,9 @@ namespace evolve
                 return new Tree<rType>(root->clone());
             }
 
+            /*!
+             * Evaluates the root BaseNode
+             */
             rType eval() const {
                 return root->eval();
             }
@@ -191,6 +216,9 @@ namespace evolve
         }
 
 
+        /*
+         * Factory used to generate random trees for the TreeGA.
+         */
         template<typename rType>
         class TreeFactory
         {

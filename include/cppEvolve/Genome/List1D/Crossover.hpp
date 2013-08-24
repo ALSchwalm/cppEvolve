@@ -11,6 +11,10 @@ namespace evolve
 {
     namespace List1DGenome
     {
+
+        /*!
+         *  Contains built-in crossover functions for list-like genomes
+         */
         namespace Crossover
         {
             namespace details
@@ -59,6 +63,11 @@ namespace evolve
                 }
             }
 
+            /*!
+             * Selects a random point on each genome. A new genome is created with the elements
+             * before the point on one genome, and the alleles after the point on the other genome.
+             * This crossover function preserves the number of alleles in the genome.
+             */
             template<typename genome>
             genome singlePoint(const genome& g1,
                                const genome& g2)
