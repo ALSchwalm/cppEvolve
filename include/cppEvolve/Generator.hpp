@@ -9,6 +9,8 @@
 namespace evolve
 {
 
+    using namespace utils;
+
     template<typename genome, typename enabled = void>
     class Generator;
 

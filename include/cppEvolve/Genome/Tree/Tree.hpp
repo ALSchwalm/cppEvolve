@@ -9,6 +9,8 @@
 
 namespace evolve
 {
+    using namespace utils;
+
     namespace Tree
     {
 
