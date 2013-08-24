@@ -8,14 +8,8 @@
 
 namespace evolve
 {
-
-    using namespace utils;
-
-    template<typename genome, typename enabled = void>
-    class Generator;
-
     template<typename genome>
-    class Generator<genome, typename std::enable_if<has_pushback<genome>::value>::type>
+    class Generator
     {
     public:
         typedef typename genome::value_type allele;
@@ -24,7 +18,19 @@ namespace evolve
             gen(_gen),
             num(_num){}
 
-        genome operator()() {
+
+        genome operator()()
+        {
+            return eval(typename utils::has_pushback<genome>::type());
+        }
+
+
+    protected:
+        std::function<allele(void)> gen;
+        unsigned int num;
+
+        genome eval(std::true_type)
+        {
             genome g;
 
             for (auto i=0U; i < num; i++) {
@@ -34,22 +40,8 @@ namespace evolve
             return g;
         }
 
-    protected:
-        std::function<allele(void)> gen;
-        unsigned int num;
-
-    };
-
-
-    template<typename genome>
-    class Generator<genome, typename std::enable_if<!has_pushback<genome>::value>::type>
-    {
-    public:
-        typedef typename genome::value_type allele;
-        Generator(std::function<allele(void)> _gen) :
-            gen(_gen){}
-
-        genome operator()() {
+        genome eval(std::false_type)
+        {
             genome g;
 
             for (auto i=0U; i < g.size(); i++) {
@@ -59,8 +51,6 @@ namespace evolve
             return g;
         }
 
-    protected:
-        std::function<allele(void)> gen;
     };
 }
 

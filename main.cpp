@@ -61,8 +61,6 @@ int main()
 
     gaList.run();
 
-
-
     Tree::TreeFactory<int> factory(5);
     factory.addNode(sum, "sum");
     factory.addNode(product, "product");

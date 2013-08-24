@@ -10,32 +10,39 @@ namespace evolve
     {
         namespace Mutator
         {
-
-            template<typename genome>
-            typename std::enable_if<has_indexing<genome>::value>::type
-                swap(genome& g)
+            namespace details
             {
-                unsigned int s1 = rand() % g.size();
-                unsigned int s2 = rand() % g.size();
+                template<typename genome>
+                void swapHelper(genome& g, std::true_type hasIndexing)
+                {
+                    unsigned int s1 = rand() % g.size();
+                    unsigned int s2 = rand() % g.size();
 
-                std::swap(g[s1], g[s2]);
+                    std::swap(g[s1], g[s2]);
+                }
+
+                template<typename genome>
+                void swapHelper(genome& g, std::false_type hasIndexing)
+                {
+                    unsigned int s1 = rand() % g.size();
+                    unsigned int s2 = rand() % g.size();
+
+                    auto s1location = g.begin();
+                    auto s2location = g.begin();
+
+                    std::advance(s1location, s1);
+                    std::advance(s2location, s2);
+
+                    std::swap(s1location, s2location);
+                }
             }
 
             template<typename genome>
-            typename std::enable_if<!has_indexing<genome>::value>::type
-                swap(genome& g)
+            void swap(genome& g)
             {
-                unsigned int s1 = rand() % g.size();
-                unsigned int s2 = rand() % g.size();
-
-                auto s1location = g.begin();
-                auto s2location = g.begin();
-
-                std::advance(s1location, s1);
-                std::advance(s2location, s2);
-
-                std::swap(s1location, s2location);
+                details::swapHelper(g, typename utils::has_indexing<genome>::type());
             }
+
         }
     }
 }

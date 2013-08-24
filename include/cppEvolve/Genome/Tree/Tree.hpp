@@ -9,7 +9,6 @@
 
 namespace evolve
 {
-    using namespace utils;
 
     namespace Tree
     {
@@ -73,13 +72,11 @@ namespace evolve
                 BaseNode<typename genome::result_type>(_name, _id),
                 val(g) {}
 
-            Node(const Node<genome>& n) : Node(n.val, n.name, n.ID){}
-
             virtual ~Node(){}
 
             virtual BaseNode<typename genome::result_type>* clone() const
             {
-                auto node = new Node<genome>(*this);
+                auto node = new Node<genome>(val, this->name, this->ID);
                 for (auto child : this->children)
                 {
                     node->children.push_back(child->clone());
@@ -89,12 +86,12 @@ namespace evolve
 
             virtual typename genome::result_type eval() const override
             {
-                return unpack_caller<typename genome::result_type>::eval(val, this->children);
+                return utils::unpack_caller<typename genome::result_type>::eval(val, this->children);
             }
 
             virtual unsigned int getNumChildren() const override
             {
-                return count_args<genome>::value;
+                return utils::count_args<genome>::value;
             }
 
         private:
@@ -106,19 +103,17 @@ namespace evolve
         class Terminator: public BaseNode<typename genome::result_type>
         {
         public:
-            static_assert(count_args<genome>::value == 0, "The number of arguments for a terminator must be 0");
+            static_assert(utils::count_args<genome>::value == 0, "The number of arguments for a terminator must be 0");
 
             Terminator(genome g, const std::string& _name, unsigned int _id) :
                 BaseNode<typename genome::result_type>(_name, _id),
                 val(g){}
 
-            Terminator(const Terminator<genome>& t) : Terminator(t.val, t.name, t.ID){}
-
             virtual ~Terminator(){}
 
             virtual BaseNode<typename genome::result_type>* clone() const
             {
-                auto node = new Terminator<genome>(*this);
+                auto node = new Terminator<genome>(val, this->name, this->ID);
                 for (auto child : this->children)
                 {
                     node->children.push_back(child->clone());

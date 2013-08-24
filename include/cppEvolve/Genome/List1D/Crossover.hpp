@@ -13,47 +13,57 @@ namespace evolve
     {
         namespace Crossover
         {
-            template<typename genome>
-            typename std::enable_if<!has_range_insert<genome>::value, genome>::type
-            singlePoint(const genome& g1,
-                        const genome& g2)
+            namespace details
             {
-                genome g;
-
-                auto size = std::min(g1.size(), g2.size());
-                auto location = rand() % size;
-
-                for (auto i=0U; i < size; ++i)
+                template<typename genome>
+                genome singlePointHelper(const genome& g1,
+                                         const genome& g2,
+                                         std::false_type hasRangeInsert)
                 {
-                    if (i <= location)
-                        g[i] = g1[i];
-                    else
-                        g[i] = g2[i];
+                    genome g;
+
+                    auto size = std::min(g1.size(), g2.size());
+                    auto location = rand() % size;
+
+                    for (auto i=0U; i < size; ++i)
+                    {
+                        if (i <= location)
+                            g[i] = g1[i];
+                        else
+                            g[i] = g2[i];
+                    }
+
+                    return g;
                 }
 
-                return g;
+
+                template<typename genome>
+                genome singlePointHelper(const genome& g1,
+                                         const genome& g2,
+                                         std::true_type hasRangeInsert)
+                {
+                    genome g;
+
+                    auto size = std::min(g1.size(), g2.size());
+                    auto location = rand() % size;
+
+                    auto g1location = g1.begin();
+                    auto g2location = g2.begin();
+
+                    std::advance(g1location, location);
+                    std::advance(g2location, location);
+
+                    g.insert(g.begin(), g1.begin(), g1location);
+                    g.insert(g.end(), g2location, g2.end());
+                    return g;
+                }
             }
 
-
             template<typename genome>
-            typename std::enable_if<has_range_insert<genome>::value, genome>::type
-            singlePoint(const genome& g1,
-                        const genome& g2)
+            genome singlePoint(const genome& g1,
+                               const genome& g2)
             {
-                genome g;
-
-                auto size = std::min(g1.size(), g2.size());
-                auto location = rand() % size;
-
-                auto g1location = g1.begin();
-                auto g2location = g2.begin();
-
-                std::advance(g1location, location);
-                std::advance(g2location, location);
-
-                g.insert(g.begin(), g1.begin(), g1location);
-                g.insert(g.end(), g2location, g2.end());
-                return g;
+                return details::singlePointHelper(g1, g2, typename utils::has_range_insert<genome>::type());
             }
         }
     }
