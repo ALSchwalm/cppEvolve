@@ -16,19 +16,19 @@ For example, functions from the ListGenome namespace must be templated on types 
 
 Once a type has been chosen to represent the genome for a particular algorithm, in most cases the user only needs to construct a "simpleGA" instance with a few functions.
 
-```C++
-    typedef std::vector<int> genome;
+	```C++
+		typedef std::vector<int> genome;
 
-    Generator<genome> generator([]{return rand();}, 5);
+		Generator<genome> generator([]{return rand();}, 5);
 
-    SimpleGA<genome, 100> ga(generator,
-                             List1DGenome::Evaluator::sum<genome>,
-                             List1DGenome::Crossover::singlePoint<genome>,
-                             List1DGenome::Mutator::swap<genome>,
-                             Selector::top<genome, 30>,
-                             1000);
+		SimpleGA<genome, 100> ga(generator,
+								 List1DGenome::Evaluator::sum<genome>,
+								 List1DGenome::Crossover::singlePoint<genome>,
+								 List1DGenome::Mutator::swap<genome>,
+								 Selector::top<genome, 30>,
+								 1000);
 
-```
+	```
 
 The simpleGA class requires 5 arguments:
 
