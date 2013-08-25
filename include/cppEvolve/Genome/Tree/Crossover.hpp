@@ -7,10 +7,20 @@ namespace evolve
 {
     namespace Tree
     {
+        /*!
+         *  Contains built-in crossover functions for the Tree genome.
+         */
         namespace Crossover
         {
+
+            /*!
+             *  Selects a random node from one of the subtrees as the "source". Another node is
+             *  selected from the other tree of the same height as the first. A new Tree is created
+             *  which is a copy of the first but with the selected branch replaced. The height of the
+             *  new tree will be the same as the first tree.
+             */
             template<typename T>
-            Tree<T>* singlePointCrossover(const Tree<T>* left, const Tree<T>* right)
+            Tree<T>* singlePoint(const Tree<T>* left, const Tree<T>* right)
             {
                 auto tree = left->clone(); //Copy left
 

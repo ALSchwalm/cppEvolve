@@ -7,8 +7,17 @@ namespace evolve
 {
     namespace Tree
     {
+
+        /*!
+         *  Contains built-in mutators for the Tree genome
+         */
         namespace Mutator
         {
+
+            /*!
+             * Selects a random node from the tree. The node is then replaced with a random
+             * sub tree such that the height of the tree is unaffected.
+             */
             template<typename T>
             void randomNode(Tree<T>* tree, const TreeFactory<T>& factory)
             {

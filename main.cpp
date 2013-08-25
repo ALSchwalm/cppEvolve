@@ -69,7 +69,7 @@ int main()
 
     TreeGA<int, 40> gaTree(factory,
                            treeFitness,
-                           Tree::Crossover::singlePointCrossover<int>,
+                           Tree::Crossover::singlePoint<int>,
                            Tree::Mutator::randomNode<int>,
                            Selector::top<Tree::Tree<int>*, 10>,
                            1000);

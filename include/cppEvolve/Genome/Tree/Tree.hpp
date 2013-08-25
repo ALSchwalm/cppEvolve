@@ -116,7 +116,7 @@ namespace evolve
 
         /*!
          * The node class wraps functions which take no arguments. They can be constructed from
-         * lambdas, and are used to 'terminat' the branches of the function tree genome.
+         * lambdas, and are used to 'terminate' the branches of the function tree genome.
          */
         template<typename genome>
         class Terminator: public BaseNode<typename genome::result_type>
