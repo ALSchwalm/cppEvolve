@@ -9,14 +9,30 @@
 
 namespace evolve
 {
-
+    /*!
+     * GA for use with the built-in Tree genome.
+     *
+     * \tparam rType The type to be accepted and returned by all of the functions in the tree
+     * \tparam popSize The maximum number of individuals in the population
+     */
     template<typename rType, size_t popSize=100>
     class TreeGA
     {
     public:
+
+        /*!
+         * \param _generator A TreeFactory instance used to create the initial population
+         * \param _evaluator The fitness function for this GA. Fitness must be expressible as a double
+         * \param _crossover The function used to create the next generation via some form of crossing over
+         * \param _mutator   Used to alter a particular member of the population.
+         *                   This function will be called on mutationRate percent of the population
+         * \param _selector  Used to choose the members which "survive" to the next generation.
+         *                   The function must leave at least 1 member in the population.
+         * \param _generations The number of generation for which to run the GA.
+         */
         TreeGA(Tree::TreeFactory<rType> _generator,
 
-                 std::function<float(const Tree::Tree<rType>*)> _evaluator,
+                 std::function<double(const Tree::Tree<rType>*)> _evaluator,
 
                  std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
                                                  const Tree::Tree<rType>*)> _crossover,
@@ -40,6 +56,13 @@ namespace evolve
 
         virtual ~TreeGA(){}
 
+        /*!
+         * Begin the GA. First, the population is seeded with the Generator, until it contains
+         * "popSize" individuals. The simulator then loops for "generations". Each generation
+         * it selects the members via the selector then uses the crossover function to refill
+         * the missing population. The mutation function is applied to "mutationRate" percent of
+         * the population. Logging occurs at completion and every logFrequency steps.
+         */
         virtual void run(unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
@@ -82,15 +105,19 @@ namespace evolve
             std::cout << "Fitness: " << bestScore << std::endl;
         }
 
-
-        void setPopulation(const std::array<Tree::Tree<rType>*, popSize>& _population) {
-            population = _population;
-        }
-
+        /*!
+         * Set the percentage of the population to which the mutation function is applied.
+         */
         void setMutationRate(float rate) {mutationRate = rate;}
 
+        /*!
+         * Get a reference to the current population of the GA.
+         */
         std::array<Tree::Tree<rType>*, popSize>& getPopulation() const {return population;}
 
+        /*!
+         * Get the most fit member of the population of all time.
+         */
         const Tree::Tree<rType>* getBest() const {return bestIndividual;}
 
     protected:
@@ -100,7 +127,7 @@ namespace evolve
         Tree::Tree<rType>* bestIndividual = nullptr;  //Historically best individual
         double bestScore = std::numeric_limits<float>::lowest();
 
-        std::function<float(const Tree::Tree<rType>*)> evaluator;
+        std::function<double(const Tree::Tree<rType>*)> evaluator;
 
         std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
                                         const Tree::Tree<rType>*)> crossover;

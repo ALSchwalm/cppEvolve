@@ -11,6 +11,10 @@ namespace evolve
     /*!
      * This class is responsible for constructing the genomes used as the initial population in
      * a SimpleGA.
+     *
+     * \tparam genome This type must be a container either with a push_back method or
+     *                a fixed size with an operator[] (i.e. std::array). It must also contain
+     *                a "value_type" typdef for the type which it contains.
      */
     template<typename genome>
     class Generator

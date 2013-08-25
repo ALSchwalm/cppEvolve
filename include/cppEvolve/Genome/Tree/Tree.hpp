@@ -51,12 +51,19 @@ namespace evolve
                 return max+1;
             }
 
+            /*!
+             * Create a new copy of the node, without copying the children vector
+             */
             virtual BaseNode<rtype>* clone() const =0;
 
             virtual unsigned int getNumChildren() const =0;
 
             const std::string& getName() const {return name;}
 
+            /*!
+             * Returns the ID of the function within the node. This ID may be used with
+             * a TreeFactory to retrieve the function used to create the node.
+             */
             unsigned int getID() const {return ID;}
 
             template<typename T>
@@ -223,8 +230,8 @@ namespace evolve
         class TreeFactory
         {
         public:
-            TreeFactory(unsigned int _depth=5) :
-                depth(_depth),
+            TreeFactory(unsigned int _height=5) :
+                height(_height),
                 currentID(0){}
 
             template<typename... T>
@@ -247,14 +254,22 @@ namespace evolve
                 terminators[currentID++] = func;
             }
 
+            /*!
+             * Construct a new random tree of "height" height. Note that this member may not
+             * be called until at least one Node and Terminator have been added to the
+             * TreeFactory.
+             */
             Tree<rType>* make() const
             {
                 assert(!terminators.empty() && !nodes.empty());
-                auto tree = new Tree<rType>(createRandomSubTree(depth));
+                auto tree = new Tree<rType>(createRandomSubTree(height));
 
                 return tree;
             }
 
+            /*!
+             * Create a new random Node. This is useful for writing mutators for the Tree genome.
+             */
             BaseNode<rType>* createRandomNode() const
             {
                 auto loc = nodes.begin();
@@ -262,6 +277,9 @@ namespace evolve
                 return ((*loc).second)();
             }
 
+            /*!
+             * Create a new random Terminator. This is useful for writing mutators for the Tree genome.
+             */
             BaseNode<rType>* createRandomTerminator() const
             {
                 auto loc = terminators.begin();
@@ -269,27 +287,46 @@ namespace evolve
                 return ((*loc).second)();
             }
 
-            BaseNode<rType>* createRandomSubTree(unsigned int depth=5) const {
+            /*!
+             * Create a random Node with appropriate children to form a tree of "height" height.
+             */
+            BaseNode<rType>* createRandomSubTree(unsigned int height=5) const {
 
                 BaseNode<rType>* root = nullptr;
 
-                if (depth == 0) {
+                if (height == 0) {
                     root = createRandomTerminator();
                 }
                 else {
                     root = createRandomNode();
                     for (unsigned int i=0; i < root->getNumChildren(); ++i)
                     {
-                        root->getChildren().push_back(createRandomSubTree(depth-1));
+                        root->getChildren().push_back(createRandomSubTree(height-1));
                     }
                 }
                 return root;
             }
 
         protected:
-            unsigned int depth;
+            unsigned int height; /*!< Height of the generated trees */
+
+            /*!
+             *  currentID is incremented after each
+             *  Node or Terminator is inserted. This allows
+             *  the TreeFactory to be certain that a given BaseNode
+             *  ID will be in either the nodes map or the terminators
+             *  map.
+             */
             unsigned int currentID;
+
+            /*!
+             * Map mapping IDs to functions which create BaseNode* to Nodes
+             */
             std::map<unsigned int, std::function<BaseNode<rType>*()>> nodes;
+
+            /*!
+             * Map mapping IDs to functions which create BaseNode* to Nodes
+             */
             std::map<unsigned int, std::function<BaseNode<rType>*()>> terminators;
 
         };
