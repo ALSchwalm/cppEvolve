@@ -4,7 +4,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <vector>
+#include <array>
+#include <set>
+#include <functional>
 
 namespace evolve
 {
@@ -33,15 +35,23 @@ namespace evolve
                  std::function<genomeType(const genomeType&,
                                           const genomeType&)> _crossover,
                  std::function<void(genomeType&)> _mutator,
-                 std::function<void(std::vector<genomeType>&,
+                 std::function<void(std::multiset<genomeType,
+                                             std::function<bool(const genomeType&, const genomeType&)>>&,
                                     std::function<double(const genomeType&)>)> _selector,
                  unsigned long _generations = 10000UL) :
+
             generator(_generator),
             evaluator(_evaluator),
             crossover(_crossover),
             mutator(_mutator),
             selector(_selector),
-            generations(_generations)
+            generations(_generations),
+            population([this](const genomeType& left, const genomeType& right){
+                            return evaluator(left) < evaluator(right);
+                            }),
+			bestScore(std::numeric_limits<double>::lowest()),
+			mutationRate(0.6f)
+
         {
             srand(time(NULL));
         }
@@ -60,7 +70,7 @@ namespace evolve
         {
             for(auto i=0U; i < popSize; ++i)
             {
-                population.push_back(generator());
+                population.insert(generator());
             }
 
             for(auto generation=0U; generation < generations; ++generation)
@@ -70,8 +80,12 @@ namespace evolve
                 auto popSizePostSelection = population.size();
 
                 while(population.size() < popSize) {
-                    population.push_back(crossover(population[rand() % popSizePostSelection],
-                                                   population[rand() % popSizePostSelection]));
+                    auto left = population.begin();
+                    auto right = population.begin();
+
+                    std::advance(left, rand() % popSizePostSelection);
+                    std::advance(right, rand() % popSizePostSelection);
+                    population.insert(crossover(*left, *right));
                 }
 
 
@@ -81,10 +95,10 @@ namespace evolve
                 }
 
 
-                if (evaluator(population[0]) > bestScore)
+                if (evaluator(*population.begin()) > bestScore)
                 {
-                    bestMember = population[0];
-                    bestScore = evaluator(population[0]);
+                    bestMember = *population.begin();
+                    bestScore = evaluator(*population.begin());
                 }
 
                 if (generation % logFrequency == 0) {
@@ -122,21 +136,22 @@ namespace evolve
         const genomeType& getBest() const {return bestMember;}
 
     protected:
-
-        std::vector<genomeType> population;
         Generator<genomeType> generator;
         std::function<double(const genomeType&)> evaluator;
         std::function<genomeType(const genomeType&,
                                  const genomeType&)> crossover;
         std::function<void(genomeType&)> mutator;
-        std::function<void(std::vector<genomeType>&,
+        std::function<void(std::multiset<genomeType, std::function<bool(const genomeType&, const genomeType&)>>&,
                            std::function<double(const genomeType&)>)> selector;
 
         unsigned long generations;
+        std::multiset<genomeType, std::function<bool(const genomeType&, const genomeType&)>> population;
 
         genomeType bestMember;
-        double bestScore = std::numeric_limits<double>::lowest();
-        float mutationRate = 0.6f;
+		double bestScore;
+		float mutationRate;
+
+
     };
 }
 

@@ -4,9 +4,8 @@
 
 #include <cassert>
 #include <functional>
-#include <vector>
+#include <set>
 #include <algorithm>
-#include <cstdlib>
 #include <type_traits>
 
 namespace evolve
@@ -18,19 +17,12 @@ namespace evolve
     {
         namespace details
         {
-            template<typename genome, size_t num>
-            void topHelper(std::vector<genome>& population,
+            template<typename genome, size_t num, typename Comp>
+            void topHelper(std::multiset<genome, Comp>& population,
                            std::function<float(const genome&)> evaluator,
                            std::false_type genomeIsPointer)
             {
-                std::sort(population.begin(), population.end(),
-                          [&](const genome& left,
-                              const genome& right)
-                          {
-                              return evaluator(left) > evaluator(right);
-                          });
-
-                auto location = population.begin();/*!< Detailed description after the member */
+                auto location = population.begin();
                 std::advance(location, num);
 
                 population.erase(location, population.end());
@@ -38,17 +30,10 @@ namespace evolve
 
 
             template<typename genome, size_t num>
-            void topHelper(std::vector<genome>& population,
-                           std::function<float(const genome&)> evaluator,
+            void topHelper(std::multiset<genome, std::function<bool(const genome, const genome)>>& population,
+                           std::function<float(const genome)> evaluator,
                            std::true_type genomeIsPointer)
             {
-                std::sort(population.begin(), population.end(),
-                          [&](const genome& left,
-                              const genome& right)
-                          {
-                              return evaluator(left) > evaluator(right);
-                          });
-
                 auto location = population.begin();
                 std::advance(location, num);
 
@@ -67,16 +52,14 @@ namespace evolve
          * pointer, the individuals not selected are deleted.
          */
         template<typename genome, size_t num>
-        void top(std::vector<genome>& population,
-                 std::function<float(const genome&)> evaluator)
+        void top(std::multiset<genome, std::function<bool(const genome, const genome)>>& population,
+                 std::function<float(const genome)> evaluator)
         {
             static_assert( num >=1, "Selector must leave at least 1 individual in the population");
             assert(population.size() >= num );
 
-            details::topHelper<genome, num>(population, evaluator, typename std::is_pointer<genome>::type());
+            //details::topHelper<genome, num>(population, evaluator, typename std::is_pointer<genome>::type());
         }
-
-
     }
 }
 

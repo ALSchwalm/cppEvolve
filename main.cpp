@@ -47,7 +47,7 @@ int main()
 {
 
     srand(time(NULL));
-
+/*
     typedef std::vector<int> genome;
 
     Generator<genome> generator([]{return rand();}, 5);
@@ -60,7 +60,7 @@ int main()
                              1000);
 
     gaList.run();
-
+*/
     Tree::TreeFactory<int> factory(5);
     factory.addNode(sum, "sum");
     factory.addNode(product, "product");

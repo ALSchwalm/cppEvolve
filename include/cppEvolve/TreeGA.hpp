@@ -35,13 +35,14 @@ namespace evolve
                  std::function<double(const Tree::Tree<rType>*)> _evaluator,
 
                  std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
-                                                 const Tree::Tree<rType>*)> _crossover,
+                                                  const Tree::Tree<rType>*)> _crossover,
 
                  std::function<void(Tree::Tree<rType>*,
                                     const Tree::TreeFactory<rType>&)> _mutator,
 
-                 std::function<void(std::vector<Tree::Tree<rType>*>&,
-                                    std::function<double(const Tree::Tree<rType>*)>)> _selector,
+                std::function<void(std::multiset<Tree::Tree<rType>*,
+                                                std::function<bool(const Tree::Tree<rType>*, const Tree::Tree<rType>*)>>&,
+                                   std::function<double(const Tree::Tree<rType>*)>)> _selector,
                  unsigned long _generations = 10000UL) :
 
             generator(_generator),
@@ -49,7 +50,12 @@ namespace evolve
             crossover(_crossover),
             mutator(_mutator),
             selector(_selector),
-            generations(_generations)
+            generations(_generations),
+            population([this](const Tree::Tree<rType>* left, const Tree::Tree<rType>* right){
+                            return evaluator(left) < evaluator(right);
+                        }),
+			bestScore(std::numeric_limits<float>::lowest()),
+			mutationRate(0.6f)
         {
             srand(time(NULL));
         }
@@ -67,7 +73,7 @@ namespace evolve
         {
             for(auto i=0U; i < popSize; ++i)
             {
-                population.push_back(generator.make());
+                population.insert(generator.make());
             }
 
             for(auto generation=0U; generation < generations; ++generation)
@@ -77,8 +83,12 @@ namespace evolve
                 auto popSizePostSelection = population.size();
 
                 while(population.size() < popSize) {
-                    population.push_back(crossover(population[rand() % popSizePostSelection],
-                                                   population[rand() % popSizePostSelection]));
+                    auto left = population.begin();
+                    auto right = population.begin();
+
+                    std::advance(left, rand() % popSizePostSelection);
+                    std::advance(right, rand() % popSizePostSelection);
+                    population.insert(crossover(*left, *right));
                 }
 
 
@@ -87,11 +97,11 @@ namespace evolve
                         mutator(member, generator);
                 }
 
-                auto score = evaluator(population[0]);
+                auto score = evaluator(*population.begin());
                 if ( score > bestScore)
                 {
                     delete bestIndividual;
-                    bestIndividual = population[0]->clone();
+                    bestIndividual = (*population.begin())->clone();
                     bestScore = score;
                 }
 
@@ -121,26 +131,30 @@ namespace evolve
         const Tree::Tree<rType>* getBest() const {return bestIndividual;}
 
     protected:
-        std::vector<Tree::Tree<rType>*> population;
         Tree::TreeFactory<rType> generator;
 
-        Tree::Tree<rType>* bestIndividual = nullptr;  //Historically best individual
-        double bestScore = std::numeric_limits<float>::lowest();
+        Tree::Tree<rType>* bestIndividual;  //Historically best individual
+		
 
         std::function<double(const Tree::Tree<rType>*)> evaluator;
 
         std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
-                                        const Tree::Tree<rType>*)> crossover;
+                                         const Tree::Tree<rType>*)> crossover;
 
         std::function<void(Tree::Tree<rType>*,
                       const Tree::TreeFactory<rType>&)> mutator;
 
-        std::function<void(std::vector<Tree::Tree<rType>*>&,
+        std::function<void(std::multiset<Tree::Tree<rType>*,
+                                        std::function<bool(const Tree::Tree<rType>*, const Tree::Tree<rType>*)>>&,
                            std::function<double(const Tree::Tree<rType>*)>)> selector;
 
-
         unsigned long generations;
-        float mutationRate = 0.6f;
+
+        std::multiset<Tree::Tree<rType>*,
+                      std::function<bool(const Tree::Tree<rType>*, const Tree::Tree<rType>*)>> population;
+
+		double bestScore;
+		float mutationRate;
     };
 }
 
