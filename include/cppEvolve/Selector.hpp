@@ -52,8 +52,9 @@ namespace evolve
          * pointer, the individuals not selected are deleted.
          */
         template<typename genome, size_t num>
-        void top(std::multiset<genome, std::function<bool(const genome, const genome)>>& population,
-                 std::function<float(const genome)> evaluator)
+        void top(std::multiset<typename std::remove_pointer<genome>::type*, std::function<bool(const typename std::remove_pointer<genome>::type*,
+                                                                                               const typename std::remove_pointer<genome>::type*)>>& population,
+                 std::function<float(const typename std::remove_pointer<genome>::type*)> evaluator)
         {
             static_assert( num >=1, "Selector must leave at least 1 individual in the population");
             assert(population.size() >= num );

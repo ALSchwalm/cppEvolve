@@ -36,7 +36,7 @@ namespace evolve
                                           const genomeType&)> _crossover,
                  std::function<void(genomeType&)> _mutator,
                  std::function<void(std::multiset<genomeType,
-                                             std::function<bool(const genomeType&, const genomeType&)>>&,
+                                             bool(*)(const genomeType&, const genomeType&)>&,
                                     std::function<double(const genomeType&)>)> _selector,
                  unsigned long _generations = 10000UL) :
 
@@ -141,11 +141,11 @@ namespace evolve
         std::function<genomeType(const genomeType&,
                                  const genomeType&)> crossover;
         std::function<void(genomeType&)> mutator;
-        std::function<void(std::multiset<genomeType, std::function<bool(const genomeType&, const genomeType&)>>&,
+        std::function<void(std::multiset<genomeType, bool(*)(const genomeType&, const genomeType&)>&,
                            std::function<double(const genomeType&)>)> selector;
 
         unsigned long generations;
-        std::multiset<genomeType, std::function<bool(const genomeType&, const genomeType&)>> population;
+        std::multiset<genomeType, bool(*)(const genomeType&, const genomeType&)> population;
 
         genomeType bestMember;
 		double bestScore;

@@ -54,6 +54,7 @@ namespace evolve
             population([this](const Tree::Tree<rType>* left, const Tree::Tree<rType>* right){
                             return evaluator(left) < evaluator(right);
                         }),
+            bestIndividual(nullptr),
 			bestScore(std::numeric_limits<float>::lowest()),
 			mutationRate(0.6f)
         {
@@ -98,7 +99,7 @@ namespace evolve
                 }
 
                 auto score = evaluator(*population.begin());
-                if ( score > bestScore)
+                if ( score > bestScore || !bestIndividual)
                 {
                     delete bestIndividual;
                     bestIndividual = (*population.begin())->clone();
@@ -133,9 +134,6 @@ namespace evolve
     protected:
         Tree::TreeFactory<rType> generator;
 
-        Tree::Tree<rType>* bestIndividual;  //Historically best individual
-		
-
         std::function<double(const Tree::Tree<rType>*)> evaluator;
 
         std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
@@ -153,6 +151,7 @@ namespace evolve
         std::multiset<Tree::Tree<rType>*,
                       std::function<bool(const Tree::Tree<rType>*, const Tree::Tree<rType>*)>> population;
 
+        Tree::Tree<rType>* bestIndividual;  //Historically best individual
 		double bestScore;
 		float mutationRate;
     };
