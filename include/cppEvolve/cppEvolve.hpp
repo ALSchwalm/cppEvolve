@@ -5,4 +5,9 @@
 #include "Selector.hpp"
 #include "SimpleGA.hpp"
 
+/*!
+ * Namespace containing all the cppEvolve functions and classes
+ */
+namespace evolve{}
+
 #endif

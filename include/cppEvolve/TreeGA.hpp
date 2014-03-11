@@ -57,9 +57,9 @@ namespace evolve
                 }
 
 
-                for(auto member : population) {
-                    if (rand() % 10000 > mutationRate*10000)
-                        mutator(member, generator);
+                for(size_t i=0; i < popSize*mutationRate; ++i) {
+                    auto index = rand()%popSize;
+                    mutator(population[index], generator);
                 }
 
                 auto score = evaluator(population[0]);

@@ -80,7 +80,8 @@ namespace evolve
 
         /*!
          * Select the top 'num' individuals from the population. If genome is a
-         * pointer, the individuals not selected are deleted.
+         * pointer, the individuals not selected are deleted. Ordering determines
+         * whether HIGHER or LOWER values are considered more fit.
          */
         template<typename Genome, size_t num, Ordering order = Ordering::HIGHER>
         void top(std::vector<Genome>& population,

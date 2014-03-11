@@ -11,27 +11,51 @@ namespace evolve
 {
     using std::function;
 
+    ///Function which will return instances of Genome to be used in the initial population
     template<typename Genome>
     using GeneratorType = std::function<Genome()>;
 
+    ///Function which returns a double representing the fitness of a member of the population
     template<typename Genome>
     using EvaluatorType = std::function<double(const Genome&)>;
 
+    ///Function which returns a new member of the population by combining two parents
     template<typename Genome>
     using CrossoverType = std::function<Genome(const Genome&,
                                                const Genome&)>;
 
+    ///Function which will alter a member of the population in some way
     template<typename Genome>
     using MutatorType = std::function<void(Genome&)>;
 
+    ///Function which removes the less fit members from the population
     template<typename Genome>
     using SelectorType = std::function<void(std::vector<Genome>&,
                                             EvaluatorType<Genome>)>;
 
+    /*!
+     * Defines a Simple genetic algorithm. That is, an algorithm for which no special
+     * behavior is required to copy or modify the genome.
+     */
     template<typename Genome, size_t popSize=100>
     class SimpleGA
     {
     public:
+
+       /*!
+        * @param _generator A function which will return instances of Genome to be used in
+        *   the initial population
+        *
+        * @param _evaluator A function which returns a double representing the fitness of a
+        *   member of the population
+        *
+        * @param _crossover A function which returns a new member of the population by
+        *   combining two parents
+        *
+        * @param _mutator A function which will alter a member of the population in some way
+        *
+        * @param _selector A function which removes the less fit members from the population
+        */
         SimpleGA(GeneratorType<Genome> _generator,
                  EvaluatorType<Genome> _evaluator,
                  CrossoverType<Genome> _crossover,
@@ -66,7 +90,7 @@ namespace evolve
 
 
                 for(size_t i=0; i < popSize*mutationRate; ++i) {
-                auto index = rand()%popSize;
+                    auto index = rand()%popSize;
                     mutator(population[index]);
                 }
 
@@ -99,7 +123,6 @@ namespace evolve
         std::array<Genome, popSize>& getPopulation() const {return population;}
 
     protected:
-
         std::vector<Genome> population;
         GeneratorType<Genome>  generator;
         EvaluatorType<Genome> evaluator;
