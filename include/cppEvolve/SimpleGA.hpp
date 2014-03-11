@@ -1,15 +1,16 @@
 #ifndef SIMPLEGA_H_
 #define SIMPLEGA_H_
 
+#include "cppEvolve/utils.hpp"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <vector>
 
-using std::function;
-
 namespace evolve
 {
+    using std::function;
+
     template<typename Genome>
     using GeneratorType = std::function<Genome()>;
 
@@ -36,21 +37,19 @@ namespace evolve
                  EvaluatorType<Genome> _evaluator,
                  CrossoverType<Genome> _crossover,
                  MutatorType<Genome> _mutator,
-                 SelectorType<Genome>  _selector,
-                 unsigned long _generations = 10000UL) :
+                 SelectorType<Genome>  _selector) :
             generator(_generator),
             evaluator(_evaluator),
             crossover(_crossover),
             mutator(_mutator),
-            selector(_selector),
-            generations(_generations)
+            selector(_selector)
         {
             srand(time(NULL));
         }
 
         virtual ~SimpleGA(){}
 
-        virtual void run(unsigned int logFrequency=100)
+        virtual void run(unsigned int generations, unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
             {
@@ -59,8 +58,6 @@ namespace evolve
 
             for(auto generation=0U; generation < generations; ++generation)
             {
-                selector(population, evaluator);
-
                 auto popSizePostSelection = population.size();
 
                 while(population.size() < popSize) {
@@ -69,11 +66,12 @@ namespace evolve
                 }
 
 
-                for(auto member : population) {
-                    if (rand() % 10000 > mutationRate*10000)
-                        mutator(member);
+                for(size_t i=0; i < popSize*mutationRate; ++i) {
+                auto index = rand()%popSize;
+                    mutator(population[index]);
                 }
 
+                selector(population, evaluator);
 
                 if (evaluator(population[0]) > bestScore)
                 {
@@ -109,8 +107,6 @@ namespace evolve
         CrossoverType<Genome> crossover;
         MutatorType<Genome> mutator;
         SelectorType<Genome> selector;
-
-        unsigned long generations;
 
         Genome bestMember;
         double bestScore = std::numeric_limits<float>::lowest();

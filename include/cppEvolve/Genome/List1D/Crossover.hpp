@@ -19,12 +19,12 @@ namespace evolve
         {
             namespace details
             {
-                template<typename genome>
-                genome singlePointHelper(const genome& g1,
-                                         const genome& g2,
+                template<typename Genome>
+                Genome singlePointHelper(const Genome& g1,
+                                         const Genome& g2,
                                          std::false_type)
                 {
-                    genome g;
+                    Genome g;
 
                     auto size = std::min(g1.size(), g2.size());
                     auto location = rand() % size;
@@ -41,12 +41,12 @@ namespace evolve
                 }
 
 
-                template<typename genome>
-                genome singlePointHelper(const genome& g1,
-                                         const genome& g2,
+                template<typename Genome>
+                Genome singlePointHelper(const Genome& g1,
+                                         const Genome& g2,
                                          std::true_type)
                 {
-                    genome g;
+                    Genome g;
 
                     auto size = std::min(g1.size(), g2.size());
                     auto location = rand() % size;
@@ -64,16 +64,28 @@ namespace evolve
             }
 
             /*!
-             * Selects a random point on each genome. A new genome is created with the elements
-             * before the point on one genome, and the alleles after the point on the other genome.
-             * This crossover function preserves the number of alleles in the genome.
+             * Selects a random point on each Genome. A new Genome is created with the elements
+             * before the point on one Genome, and the alleles after the point on the other Genome.
+             * This crossover function preserves the number of alleles in the Genome.
              */
-            template<typename genome>
-            genome singlePoint(const genome& g1,
-                               const genome& g2)
+            template<typename Genome>
+            Genome singlePoint(const Genome& g1,
+                               const Genome& g2)
             {
-                return details::singlePointHelper(g1, g2, typename utils::has_range_insert<genome>::type());
+                return details::singlePointHelper(g1, g2, typename utils::has_range_insert<Genome>::type());
             }
+
+            /*!
+             * Crossover by randomly copying one of the parents
+             */
+            template<typename Genome>
+            Genome randomCopy(const Genome& g1,
+                              const Genome& g2)
+            {
+                if (rand()%2) { return g1;}
+                return g2;
+            }
+
         }
     }
 }

@@ -16,8 +16,8 @@ namespace evolve
         {
             namespace details
             {
-                template<typename genome>
-                void swapHelper(genome& g, std::true_type)
+                template<typename Genome>
+                void swapHelper(Genome& g, std::true_type)
                 {
                     unsigned int s1 = rand() % g.size();
                     unsigned int s2 = rand() % g.size();
@@ -25,8 +25,8 @@ namespace evolve
                     std::swap(g[s1], g[s2]);
                 }
 
-                template<typename genome>
-                void swapHelper(genome& g, std::false_type)
+                template<typename Genome>
+                void swapHelper(Genome& g, std::false_type)
                 {
                     unsigned int s1 = rand() % g.size();
                     unsigned int s2 = rand() % g.size();
@@ -43,12 +43,12 @@ namespace evolve
 
 
             /*!
-             *  Swaps random alleles in a given genome
+             *  Swaps two random alleles in the given Genome
              */
-            template<typename genome>
-            void swap(genome& g)
+            template<typename Genome>
+            void swap(Genome& g)
             {
-                details::swapHelper(g, typename utils::has_indexing<genome>::type());
+                details::swapHelper(g, typename utils::has_indexing<Genome>::type());
             }
 
         }

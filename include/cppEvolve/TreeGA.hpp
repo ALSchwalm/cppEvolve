@@ -16,31 +16,29 @@ namespace evolve
     public:
         TreeGA(Tree::TreeFactory<rType> _generator,
 
-                 std::function<float(const Tree::Tree<rType>*)> _evaluator,
+                 function<float(const Tree::Tree<rType>*)> _evaluator,
 
-                 std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
-                                                  const Tree::Tree<rType>*)> _crossover,
+                 function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
+                                             const Tree::Tree<rType>*)> _crossover,
 
-                 std::function<void(Tree::Tree<rType>*,
-                                    const Tree::TreeFactory<rType>&)> _mutator,
+                 function<void(Tree::Tree<rType>*,
+                               const Tree::TreeFactory<rType>&)> _mutator,
 
-                 std::function<void(std::vector<Tree::Tree<rType>*>&,
-                                    std::function<double(const Tree::Tree<rType>*)>)> _selector,
-                 unsigned long _generations = 10000UL) :
+                 function<void(std::vector<Tree::Tree<rType>*>&,
+                               function<double(const Tree::Tree<rType>*)>)> _selector) :
 
             generator(_generator),
             evaluator(_evaluator),
             crossover(_crossover),
             mutator(_mutator),
-            selector(_selector),
-            generations(_generations)
+            selector(_selector)
         {
             srand(time(NULL));
         }
 
         virtual ~TreeGA(){}
 
-        virtual void run(unsigned int logFrequency=100)
+        virtual void run(unsigned int generations, unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
             {
@@ -100,19 +98,17 @@ namespace evolve
         Tree::Tree<rType>* bestIndividual = nullptr;  //Historically best individual
         double bestScore = std::numeric_limits<float>::lowest();
 
-        std::function<float(const Tree::Tree<rType>*)> evaluator;
+        function<float(const Tree::Tree<rType>*)> evaluator;
 
-        std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
+        function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
                                         const Tree::Tree<rType>*)> crossover;
 
-        std::function<void(Tree::Tree<rType>*,
+        function<void(Tree::Tree<rType>*,
                       const Tree::TreeFactory<rType>&)> mutator;
 
-        std::function<void(std::vector<Tree::Tree<rType>*>&,
-                           std::function<double(const Tree::Tree<rType>*)>)> selector;
+        function<void(std::vector<Tree::Tree<rType>*>&,
+                           function<double(const Tree::Tree<rType>*)>)> selector;
 
-
-        unsigned long generations;
         float mutationRate = 0.6f;
     };
 }

@@ -69,16 +69,11 @@ int main() {
         Tree::Mutator::randomNode<int>,
 
         //Selector: Select the 10 most fit members of the population each generation
-        Selector::top<Tree::Tree<int>*, 10>,
-
-        //Population: 1000 individual
-        1000);
+        Selector::top<Tree::Tree<int>*, 10>);
 
     //Set mutation rate to 2%
     gaTree.setMutationRate(0.02f);
 
-    //Run and log statistics every 100 generations, should reach around 7 primes
-    gaTree.run(100);
-
-    return 0;
+    //Run and log statistics every 20 generations, should reach around 7 primes
+    gaTree.run(500, 20);
 }

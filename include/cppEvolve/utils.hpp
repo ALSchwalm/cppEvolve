@@ -8,6 +8,11 @@
 
 namespace evolve
 {
+    enum class Ordering {
+        LOWER,
+        HIGHER
+    };
+
     namespace utils
     {
         template<typename T>

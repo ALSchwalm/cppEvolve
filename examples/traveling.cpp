@@ -1,38 +1,60 @@
 #include "cppEvolve/cppEvolve.hpp"
 #include "cppEvolve/Genome/List1D/List1D.hpp"
 #include <map>
+#include <string>
+#include <iostream>
 
 using namespace evolve;
 
 //define the 'cities' for this traveling salesman
-const std::map<std::string, unsigned int> distances{
-    {"ab", 5},
-    {"ac", 23},
-    {"ad", 14},
-    {"bc", 22},
-    {"bd", 19},
-    {"cd", 2}
+const std::map<const std::array<char, 2>, unsigned int> distances{
+    {{'a', 'b'}, 500},
+    {{'a', 'c'}, 1},
+    {{'a', 'd'}, 140},
+    {{'b', 'c'}, 2},
+    {{'b', 'd'}, 1},
+    {{'c', 'd'}, 200}
 };
 
 //A genome is an ordering of these cities
-using genome = std::array<char, 4>;
+using Genome = std::array<char, 4>;
 
-double listFitness(const genome& g) {
-    return 0.0f;
+//Fitness: Minimize the distance along the path
+double fitness(const Genome& ind) {
+    double total = 0;
+    for(auto i= 0U; i < ind.size()-1; ++i) {
+        if (ind[i] < ind[i+1]) {
+            total += distances.at({ind[i], ind[i+1]});
+        }
+        else {
+            total += distances.at({ind[i+1], ind[i]});
+        }
+    }
+    return total;
 }
 
 int main()
 {
-    auto generator = []() -> genome { return {'a', 'b', 'c', 'd'}; };
+    //All members of the population start with route A->B->C->D
+    auto generator = []() -> Genome { return {'a', 'b', 'c', 'd'}; };
 
-    SimpleGA<genome, 100> gaList(generator,
-                                 listFitness,
-                                 List1DGenome::Crossover::singlePoint<genome>,
-                                 List1DGenome::Mutator::swap<genome>,
-                                 Selector::top<genome, 30>,
-                                 1000);
+    SimpleGA<Genome, 50> gaList(
+        //Generator: The above generator func
+        generator,
 
-    gaList.run();
+        //The above fitness function
+        fitness,
 
-    return 0;
+        //Crossover: Take a random copy of one parent (no crossing over)
+        List1DGenome::Crossover::randomCopy<Genome>,
+
+        //Mutator: Swap two of the cities
+        List1DGenome::Mutator::swap<Genome>,
+
+        //Select the top 5 each generation ordered by lowest fitness value
+        //(smaller distance is better)
+        Selector::top<Genome, 5, Ordering::LOWER>);
+
+    //Evolve for 100 generations
+    gaList.run(100);
 }
