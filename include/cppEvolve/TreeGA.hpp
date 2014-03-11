@@ -19,7 +19,7 @@ namespace evolve
                  std::function<float(const Tree::Tree<rType>*)> _evaluator,
 
                  std::function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
-                                                 const Tree::Tree<rType>*)> _crossover,
+                                                  const Tree::Tree<rType>*)> _crossover,
 
                  std::function<void(Tree::Tree<rType>*,
                                     const Tree::TreeFactory<rType>&)> _mutator,

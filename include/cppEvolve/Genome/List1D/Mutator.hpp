@@ -17,7 +17,7 @@ namespace evolve
             namespace details
             {
                 template<typename genome>
-                void swapHelper(genome& g, std::true_type hasIndexing)
+                void swapHelper(genome& g, std::true_type)
                 {
                     unsigned int s1 = rand() % g.size();
                     unsigned int s2 = rand() % g.size();
@@ -26,7 +26,7 @@ namespace evolve
                 }
 
                 template<typename genome>
-                void swapHelper(genome& g, std::false_type hasIndexing)
+                void swapHelper(genome& g, std::false_type)
                 {
                     unsigned int s1 = rand() % g.size();
                     unsigned int s2 = rand() % g.size();

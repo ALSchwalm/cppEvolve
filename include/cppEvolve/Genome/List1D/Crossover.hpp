@@ -22,7 +22,7 @@ namespace evolve
                 template<typename genome>
                 genome singlePointHelper(const genome& g1,
                                          const genome& g2,
-                                         std::false_type hasRangeInsert)
+                                         std::false_type)
                 {
                     genome g;
 
@@ -44,7 +44,7 @@ namespace evolve
                 template<typename genome>
                 genome singlePointHelper(const genome& g1,
                                          const genome& g2,
-                                         std::true_type hasRangeInsert)
+                                         std::true_type)
                 {
                     genome g;
 

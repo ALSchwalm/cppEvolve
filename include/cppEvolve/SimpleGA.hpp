@@ -6,20 +6,37 @@
 #include <iostream>
 #include <vector>
 
+using std::function;
+
 namespace evolve
 {
+    template<typename Genome>
+    using GeneratorType = std::function<Genome()>;
 
-    template<typename genomeType, size_t popSize=100>
+    template<typename Genome>
+    using EvaluatorType = std::function<double(const Genome&)>;
+
+    template<typename Genome>
+    using CrossoverType = std::function<Genome(const Genome&,
+                                               const Genome&)>;
+
+    template<typename Genome>
+    using MutatorType = std::function<void(Genome&)>;
+
+    template<typename Genome>
+    using SelectorType = std::function<void(std::vector<Genome>&,
+                                            EvaluatorType<Genome>)>;
+
+
+    template<typename Genome, size_t popSize=100>
     class SimpleGA
     {
     public:
-        SimpleGA(Generator<genomeType> _generator,
-                 std::function<float(const genomeType&)> _evaluator,
-                 std::function<genomeType(const genomeType&,
-                                          const genomeType&)> _crossover,
-                 std::function<void(genomeType&)> _mutator,
-                 std::function<void(std::vector<genomeType>&,
-                                    std::function<double(const genomeType&)>)> _selector,
+        SimpleGA(GeneratorType<Genome> _generator,
+                 EvaluatorType<Genome> _evaluator,
+                 CrossoverType<Genome> _crossover,
+                 MutatorType<Genome> _mutator,
+                 SelectorType<Genome>  _selector,
                  unsigned long _generations = 10000UL) :
             generator(_generator),
             evaluator(_evaluator),
@@ -78,26 +95,24 @@ namespace evolve
 
         void setMutationRate(float rate){mutationRate = rate;}
 
-        void setPopulation(const std::array<genomeType, popSize>& _population) {
+        void setPopulation(const std::array<Genome, popSize>& _population) {
             population = _population;
         }
 
-        std::array<genomeType, popSize>& getPopulation() const {return population;}
+        std::array<Genome, popSize>& getPopulation() const {return population;}
 
     protected:
 
-        std::vector<genomeType> population;
-        Generator<genomeType> generator;
-        std::function<double(const genomeType&)> evaluator;
-        std::function<genomeType(const genomeType&,
-                                 const genomeType&)> crossover;
-        std::function<void(genomeType&)> mutator;
-        std::function<void(std::vector<genomeType>&,
-                           std::function<float(const genomeType&)>)> selector;
+        std::vector<Genome> population;
+        GeneratorType<Genome>  generator;
+        EvaluatorType<Genome> evaluator;
+        CrossoverType<Genome> crossover;
+        MutatorType<Genome> mutator;
+        SelectorType<Genome> selector;
 
         unsigned long generations;
 
-        genomeType bestMember;
+        Genome bestMember;
         double bestScore = std::numeric_limits<float>::lowest();
         float mutationRate = 0.6f;
     };

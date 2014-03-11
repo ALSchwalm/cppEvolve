@@ -3,16 +3,14 @@
 #define SELECTOR_H_
 
 #include <cassert>
-#include <functional>
 #include <vector>
 #include <algorithm>
-#include <cstdlib>
 #include <type_traits>
 
 namespace evolve
 {
     /*!
-     * The namespace for the built in population selectors.
+     * The namespace for the built-in population selectors.
      */
     namespace Selector
     {
@@ -20,8 +18,8 @@ namespace evolve
         {
             template<typename genome, size_t num>
             void topHelper(std::vector<genome>& population,
-                           std::function<float(const genome&)> evaluator,
-                           std::false_type genomeIsPointer)
+                           const std::function<float(const genome&)>& evaluator,
+                           std::false_type)
             {
                 std::sort(population.begin(), population.end(),
                           [&](const genome& left,
@@ -30,7 +28,7 @@ namespace evolve
                               return evaluator(left) > evaluator(right);
                           });
 
-                auto location = population.begin();/*!< Detailed description after the member */
+                auto location = population.begin();
                 std::advance(location, num);
 
                 population.erase(location, population.end());
@@ -39,8 +37,8 @@ namespace evolve
 
             template<typename genome, size_t num>
             void topHelper(std::vector<genome>& population,
-                           std::function<float(const genome&)> evaluator,
-                           std::true_type genomeIsPointer)
+                           const std::function<float(const genome&)>& evaluator,
+                           std::true_type)
             {
                 std::sort(population.begin(), population.end(),
                           [&](const genome& left,
@@ -68,7 +66,7 @@ namespace evolve
          */
         template<typename genome, size_t num>
         void top(std::vector<genome>& population,
-                 std::function<float(const genome&)> evaluator)
+                 const std::function<float(const genome&)>& evaluator)
         {
             static_assert( num >=1, "Selector must leave at least 1 individual in the population");
             assert(population.size() >= num );
