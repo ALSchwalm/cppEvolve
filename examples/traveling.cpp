@@ -5,6 +5,7 @@
 #include <iostream>
 
 using namespace evolve;
+using namespace evolve::List1DGenome;
 
 //define the 'cities' for this traveling salesman
 const std::map<const std::array<char, 2>, unsigned int> distances{
@@ -17,7 +18,7 @@ const std::map<const std::array<char, 2>, unsigned int> distances{
 };
 
 //A genome is an ordering of these cities
-using Genome = std::array<char, 4>;
+using Genome = List1DFixed<char, 4>;
 
 //Fitness: Minimize the distance along the path
 double fitness(const Genome& ind) {
