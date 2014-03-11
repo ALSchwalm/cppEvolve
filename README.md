@@ -65,4 +65,11 @@ begin the evolution. The phases of the evolution proceed in the following order:
 4. Selection
 5. If any generations remaining, go to 2 otherwise done
 
-The frequency at which statistics of the population are printed may be controled via the `logFrequency` argument to `run`. Similarly, the mutation rate may be set via the member function `setMutationRate`.
+The frequency at which statistics of the population are printed may be controlled via the `logFrequency` argument to `run`. Similarly, the mutation rate may be set via the member function `setMutationRate`.
+
+License
+=======
+
+This project is licensed under the terms of the MIT license. For more details please see the license file [here][license].
+
+[license]: https://github.com/ALSchwalm/cppEvolve/blob/master/LICENSE
