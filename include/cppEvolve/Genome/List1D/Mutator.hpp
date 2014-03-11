@@ -29,7 +29,7 @@ namespace evolve
                 std::advance(s1location, s1);
                 std::advance(s2location, s2);
 
-                std::swap(s1location, s2location);
+                std::swap(*s1location, *s2location);
             }
 
         }
