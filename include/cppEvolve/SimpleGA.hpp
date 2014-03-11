@@ -28,7 +28,6 @@ namespace evolve
     using SelectorType = std::function<void(std::vector<Genome>&,
                                             EvaluatorType<Genome>)>;
 
-
     template<typename Genome, size_t popSize=100>
     class SimpleGA
     {

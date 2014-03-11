@@ -76,19 +76,19 @@ namespace evolve
         /*!
          * The node class wraps functions which take a non-zero number of arguments.
          */
-        template<typename genome>
-        class Node : public BaseNode<typename genome::result_type>
+        template<typename Genome>
+        class Node : public BaseNode<typename Genome::result_type>
         {
         public:
-            Node(genome g, const std::string& _name, unsigned int _id) :
-                BaseNode<typename genome::result_type>(_name, _id),
+            Node(Genome g, const std::string& _name, unsigned int _id) :
+                BaseNode<typename Genome::result_type>(_name, _id),
                 val(g) {}
 
             virtual ~Node(){}
 
-            virtual BaseNode<typename genome::result_type>* clone() const
+            virtual BaseNode<typename Genome::result_type>* clone() const
             {
-                auto node = new Node<genome>(val, this->name, this->ID);
+                auto node = new Node<Genome>(val, this->name, this->ID);
                 for (auto child : this->children)
                 {
                     node->children.push_back(child->clone());
@@ -99,40 +99,40 @@ namespace evolve
             /*!
              * Evaluates all of the child nodes, then calls the wrapped function with the results
              */
-            virtual typename genome::result_type eval() const override
+            virtual typename Genome::result_type eval() const override
             {
-                return utils::unpack_caller<typename genome::result_type>::eval(val, this->children);
+                return utils::unpack_caller<typename Genome::result_type>::eval(val, this->children);
             }
 
             virtual unsigned int getNumChildren() const override
             {
-                return utils::count_args<genome>::value;
+                return utils::count_args<Genome>::value;
             }
 
         private:
-            genome val;
+            Genome val;
         };
 
 
         /*!
          * The node class wraps functions which take no arguments. They can be constructed from
-         * lambdas, and are used to 'terminate' the branches of the function tree genome.
+         * lambdas, and are used to 'terminate' the branches of the function tree Genome.
          */
-        template<typename genome>
-        class Terminator: public BaseNode<typename genome::result_type>
+        template<typename Genome>
+        class Terminator: public BaseNode<typename Genome::result_type>
         {
         public:
-            static_assert(utils::count_args<genome>::value == 0, "The number of arguments for a terminator must be 0");
+            static_assert(utils::count_args<Genome>::value == 0, "The number of arguments for a terminator must be 0");
 
-            Terminator(genome g, const std::string& _name, unsigned int _id) :
-                BaseNode<typename genome::result_type>(_name, _id),
+            Terminator(Genome g, const std::string& _name, unsigned int _id) :
+                BaseNode<typename Genome::result_type>(_name, _id),
                 val(g){}
 
             virtual ~Terminator(){}
 
-            virtual BaseNode<typename genome::result_type>* clone() const
+            virtual BaseNode<typename Genome::result_type>* clone() const
             {
-                auto node = new Terminator<genome>(val, this->name, this->ID);
+                auto node = new Terminator<Genome>(val, this->name, this->ID);
                 for (auto child : this->children)
                 {
                     node->children.push_back(child->clone());
@@ -140,7 +140,7 @@ namespace evolve
                 return node;
             }
 
-            virtual typename genome::result_type eval() const override {
+            virtual typename Genome::result_type eval() const override {
                 return val();
             }
 
@@ -149,7 +149,7 @@ namespace evolve
             }
 
         private:
-            genome val;
+            Genome val;
         };
 
 
