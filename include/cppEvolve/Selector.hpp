@@ -15,49 +15,40 @@ namespace evolve
      */
     namespace Selector
     {
-
-        template<typename Genome>
-        std::function<void(const Genome&, const Genome&)>
-        sortOrder(std::function<float(const Genome&)> evaluator, Ordering ord) {
-            if (ord == Ordering::LOWER) {
-                return [&](const Genome& left,
-                           const Genome& right)
-                {
-                    return evaluator(left) < evaluator(right);
-                };
-            }
-            else {
-                return [&](const Genome& left,
-                           const Genome& right)
-                {
-                    return evaluator(left) > evaluator(right);
-                };
-            }
-        }
-
         namespace details
         {
+            //Sort the population based on the value of Ordering
+            // (saves the user from writing a lambda)
+            template<typename Genome>
+            void orderedSort(std::vector<Genome>& population,
+                             const std::function<float(const Genome&)>& evaluator,
+                             Ordering ord) {
+
+                if (ord == Ordering::LOWER) {
+                    std::sort(population.begin(), population.end(),
+                              [&evaluator](const Genome& left,
+                                           const Genome& right)
+                              {
+                                  return evaluator(left) < evaluator(right);
+                              });
+                }
+                else {
+                    std::sort(population.begin(), population.end(),
+                              [&evaluator](const Genome& left,
+                                           const Genome& right)
+                              {
+                                  return evaluator(left) > evaluator(right);
+                              });
+                }
+            }
+
+            //Top selector for the case that Genome is not a pointer type
             template<typename Genome, size_t num, Ordering ord>
             void topHelper(std::vector<Genome>& population,
                            const std::function<float(const Genome&)>& evaluator,
                            std::false_type)
             {
-                //std::sort(population.begin(), population.end(),
-                //sortOrder<Genome>(evaluator, ord));
-                if (ord == Ordering::LOWER)
-                    std::sort(population.begin(), population.end(),
-                              [&](const Genome& left,
-                                  const Genome& right)
-                              {
-                                  return evaluator(left) < evaluator(right);
-                              });
-                else
-                    std::sort(population.begin(), population.end(),
-                              [&](const Genome& left,
-                                  const Genome& right)
-                              {
-                                  return evaluator(left) > evaluator(right);
-                              });
+                orderedSort(population, evaluator, ord);
 
                 auto location = population.begin();
                 std::advance(location, num);
@@ -65,26 +56,14 @@ namespace evolve
                 population.erase(location, population.end());
             }
 
-
+            //Top selector for the case that Genome is a pointer type
+            // (i.e. for Tree)
             template<typename Genome, size_t num, Ordering ord>
             void topHelper(std::vector<Genome>& population,
                            const std::function<float(const Genome&)>& evaluator,
                            std::true_type)
             {
-                if (ord == Ordering::LOWER)
-                    std::sort(population.begin(), population.end(),
-                              [&](const Genome& left,
-                                  const Genome& right)
-                              {
-                                  return evaluator(left) < evaluator(right);
-                              });
-                else
-                    std::sort(population.begin(), population.end(),
-                              [&](const Genome& left,
-                                  const Genome& right)
-                              {
-                                  return evaluator(left) > evaluator(right);
-                              });
+                orderedSort(population, evaluator, ord);
 
                 auto location = population.begin();
                 std::advance(location, num);
