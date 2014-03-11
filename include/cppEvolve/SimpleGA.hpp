@@ -74,6 +74,7 @@ namespace evolve
 
         virtual void run(unsigned int generations, unsigned int logFrequency=100)
         {
+            //Generation: create the new members
             for(auto i=0U; i < popSize; ++i)
             {
                 population.push_back(generator());
@@ -81,19 +82,21 @@ namespace evolve
 
             for(auto generation=0U; generation < generations; ++generation)
             {
-                auto popSizePostSelection = population.size();
 
+                //Crossover: Add missing members
+                auto popSizePostSelection = population.size();
                 while(population.size() < popSize) {
                     population.push_back(crossover(population[rand() % popSizePostSelection],
                                                    population[rand() % popSizePostSelection]));
                 }
 
-
+                //Mutation: Mutate at least rate*popsize members
                 for(size_t i=0; i < popSize*mutationRate; ++i) {
                     auto index = rand()%popSize;
                     mutator(population[index]);
                 }
 
+                //Selection: Destroy the least fit members
                 selector(population, evaluator);
 
                 if (evaluator(population[0]) > bestScore)

@@ -10,10 +10,30 @@
 namespace evolve
 {
 
+    /*!
+     * Defines a GA to use with Tree-like genomes (typically for growing algorithms.
+     * @param rType The type to be returned from the functions composing the tree
+     * @param popSize The static size of the population
+     */
     template<typename rType, size_t popSize=100>
     class TreeGA
     {
     public:
+
+        /*!
+         * @param _generator A function which will return instances of Genome to be used in
+         *   the initial population
+         *
+         * @param _evaluator A function which returns a double representing the fitness of a
+         *   member of the population
+         *
+         * @param _crossover A function which returns a new member of the population by
+         *   combining two parents
+         *
+         * @param _mutator A function which will alter a member of the population in some way
+         *
+         * @param _selector A function which removes the less fit members from the population
+         */
         TreeGA(Tree::TreeFactory<rType> _generator,
 
                  function<float(const Tree::Tree<rType>*)> _evaluator,
@@ -38,6 +58,9 @@ namespace evolve
 
         virtual ~TreeGA(){}
 
+        /*!
+         * Preform the evolution printing statistics a logFrequency intervals
+         */
         virtual void run(unsigned int generations, unsigned int logFrequency=100)
         {
             for(auto i=0U; i < popSize; ++i)
@@ -81,13 +104,21 @@ namespace evolve
         }
 
 
+        /*!
+         * Set the GA population to pre-created population.
+         */
         void setPopulation(const std::array<Tree::Tree<rType>*, popSize>& _population) {
             population = _population;
         }
 
+        /*!
+         * Set the mutation rate for the GA. Mutation guarantees that at least
+         * popSize * rate individuals (not necessarily distinct) will be mutated
+         * each generation.
+         */
         void setMutationRate(float rate) {mutationRate = rate;}
 
-        std::array<Tree::Tree<rType>*, popSize>& getPopulation() const {return population;}
+        const std::array<Tree::Tree<rType>*, popSize>& getPopulation() const {return population;}
 
         const Tree::Tree<rType>* getBest() const {return bestIndividual;}
 

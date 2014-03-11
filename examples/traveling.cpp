@@ -1,8 +1,13 @@
+/*
+ * This file servers as an example of the List1D genome and SimpleGA.
+ * The algorithm attempts to find the shortest path connecting the
+ * 'cities', 'a', 'b', 'c', and 'd'. Initial, the cities are visited
+ * in alphabetic order.
+ */
+
 #include "cppEvolve/cppEvolve.hpp"
 #include "cppEvolve/Genome/List1D/List1D.hpp"
 #include <map>
-#include <string>
-#include <iostream>
 
 using namespace evolve;
 using namespace evolve::List1DGenome;
@@ -56,6 +61,6 @@ int main()
         //(smaller distance is better)
         Selector::top<Genome, 5, Ordering::LOWER>);
 
-    //Evolve for 100 generations
+    //Evolve for 100 generations, converges on "acbd" or "dbca"
     gaList.run(100);
 }

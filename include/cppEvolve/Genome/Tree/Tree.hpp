@@ -26,6 +26,8 @@ namespace evolve
         class BaseNode
         {
         public:
+
+            ///Destructor: Also destroys all child nodes
             virtual ~BaseNode()
             {
                 for (auto child : this->children)
@@ -34,12 +36,15 @@ namespace evolve
                 }
             };
 
+            ///Evaluate the node by evaluating all child nodes
             virtual rtype eval() const=0;
 
+            ///Get the node's children
             std::vector<BaseNode<rtype>*>& getChildren() {
                 return children;
             }
 
+            ///Compute the depth of the tree from this node
             unsigned int getDepth() const {
                 unsigned int max = 0;
                 for (auto child : children)
@@ -51,10 +56,13 @@ namespace evolve
                 return max+1;
             }
 
+            ///Create a deep copy of the node
             virtual BaseNode<rtype>* clone() const =0;
 
+            ///Get the number of child nodes
             virtual unsigned int getNumChildren() const =0;
 
+            ///Get the name of the wrapped function
             const std::string& getName() const {return name;}
 
             unsigned int getID() const {return ID;}
@@ -130,6 +138,7 @@ namespace evolve
 
             virtual ~Terminator(){}
 
+            ///Create a copy of the node
             virtual BaseNode<typename Genome::result_type>* clone() const
             {
                 auto node = new Terminator<Genome>(val, this->name, this->ID);
@@ -140,6 +149,7 @@ namespace evolve
                 return node;
             }
 
+            ///Evaluate the node by calling the wrapped function
             virtual typename Genome::result_type eval() const override {
                 return val();
             }
@@ -168,6 +178,7 @@ namespace evolve
                 delete root;
             }
 
+            ///Create a deep copy of the tree
             Tree<rType>* clone() const
             {
                 return new Tree<rType>(root->clone());
@@ -227,6 +238,7 @@ namespace evolve
                 depth(_depth),
                 currentID(0){}
 
+            ///Register a node function (i.e., a function taking 1 or more arguments)
             template<typename... T>
             void addNode(rType(*f)(T...), const std::string& name)
             {
@@ -238,6 +250,7 @@ namespace evolve
                 nodes[currentID++] = func;
             }
 
+            ///Register a terminator (i.e., a function taking no arguments)
             void addTerminator(rType(*f)(), const std::string& name)
             {
                 const auto val = currentID;
@@ -247,6 +260,7 @@ namespace evolve
                 terminators[currentID++] = func;
             }
 
+            ///Create a tree with the registered functions
             Tree<rType>* make() const
             {
                 assert(!terminators.empty() && !nodes.empty());
@@ -255,6 +269,9 @@ namespace evolve
                 return tree;
             }
 
+            ///Create a random node
+            ///Node: This node must not be eval'd until it has valid children,
+            ///      to get a valid node, call createRandomSubTree
             BaseNode<rType>* createRandomNode() const
             {
                 auto loc = nodes.begin();
@@ -262,6 +279,7 @@ namespace evolve
                 return ((*loc).second)();
             }
 
+            ///Create a random terminator
             BaseNode<rType>* createRandomTerminator() const
             {
                 auto loc = terminators.begin();
@@ -269,6 +287,7 @@ namespace evolve
                 return ((*loc).second)();
             }
 
+            ///Create a random subtree
             BaseNode<rType>* createRandomSubTree(unsigned int depth=5) const {
 
                 BaseNode<rType>* root = nullptr;

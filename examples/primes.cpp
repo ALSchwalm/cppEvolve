@@ -1,3 +1,9 @@
+/*
+ * This file serves as an example for the useage of the Tree genome
+ * and TreeGA. The algorithm attemps to grow a function which will
+ * yield the most primes on consecutive integer input.
+ */
+
 #include "cppEvolve/cppEvolve.hpp"
 #include "cppEvolve/TreeGA.hpp"
 
