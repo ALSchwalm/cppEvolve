@@ -22,7 +22,7 @@ namespace evolve
             void randomNode(Tree<T>* tree, const TreeFactory<T>& factory)
             {
                 auto treeDepth = tree->getDepth();
-                auto depth = rand() % treeDepth;
+                auto depth = utils::random_uint(treeDepth);
 
                 auto currentNode = tree->root;
                 BaseNode<T>* prevNode = nullptr;
@@ -30,7 +30,7 @@ namespace evolve
                 for (unsigned int i=0; i < depth; ++i)
                 {
                     prevNode = currentNode;
-                    auto nodeLocation = rand() % currentNode->getChildren().size();
+                    auto nodeLocation = utils::random_uint(currentNode->getChildren().size());
                     currentNode = currentNode->getChildren()[nodeLocation];
 
                     if (currentNode->getChildren().empty()) {
@@ -41,7 +41,7 @@ namespace evolve
                     }
                 }
 
-                auto childValue = rand() % currentNode->getChildren().size();
+                auto childValue = utils::random_uint(currentNode->getChildren().size());
                 auto nodeDepth = currentNode->getChildren()[childValue]->getDepth();
                 delete currentNode->getChildren()[childValue];
 

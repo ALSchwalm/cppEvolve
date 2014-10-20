@@ -5,6 +5,7 @@
 #include <functional>
 #include <vector>
 #include <cassert>
+#include <random>
 
 namespace evolve
 {
@@ -15,6 +16,19 @@ namespace evolve
 
     namespace utils
     {
+        /*
+         * Generate a random number uniformly distributed in [lower, upper)
+         */
+        std::size_t random_uint(std::size_t lower, std::size_t upper) {
+            static std::default_random_engine e{};
+            std::uniform_int_distribution<std::size_t> d{lower, upper-1};
+            return d(e);
+        }
+
+        std::size_t random_uint(std::size_t upper) {
+            return random_uint(0, upper);
+        }
+
         template<typename T>
         struct count_args;
 

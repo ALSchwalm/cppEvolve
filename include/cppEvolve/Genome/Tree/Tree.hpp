@@ -275,7 +275,7 @@ namespace evolve
             BaseNode<rType>* createRandomNode() const
             {
                 auto loc = nodes.begin();
-                std::advance(loc, rand() % nodes.size());
+                std::advance(loc, utis::random_uint(nodes.size()));
                 return ((*loc).second)();
             }
 
@@ -283,7 +283,7 @@ namespace evolve
             BaseNode<rType>* createRandomTerminator() const
             {
                 auto loc = terminators.begin();
-                std::advance(loc, rand() % terminators.size());
+                std::advance(loc, utils::random_uint(terminators.size()));
                 return ((*loc).second)();
             }
 

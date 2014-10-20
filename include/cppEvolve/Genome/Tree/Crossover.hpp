@@ -25,7 +25,7 @@ namespace evolve
                 auto tree = left->clone(); //Copy left
 
                 auto treeDepth = right->getDepth();
-                auto depth = rand() % treeDepth;
+                auto depth = utils::random_uint(treeDepth);
 
                 auto sourceNode = right->root;  //Crossover from the right to the left
                 BaseNode<T>* prevSourceNode = nullptr;
@@ -38,7 +38,7 @@ namespace evolve
                         break;
                     }
                     prevSourceNode = sourceNode;
-                    sourceNode = sourceNode->getChildren()[rand() % sourceNode->getChildren().size()];
+                    sourceNode = sourceNode->getChildren()[utils::random_uint(sourceNode->getChildren().size())];
                 }
 
                 auto currentNode = tree->root;
@@ -47,7 +47,7 @@ namespace evolve
                 for (unsigned int i=0; i < depth; ++i)
                 {
                     prevNode = currentNode;
-                    auto nextNodeLocation = rand() % currentNode->getChildren().size();
+                    auto nextNodeLocation = utils::random_uint(currentNode->getChildren().size());
                     currentNode = currentNode->getChildren()[nextNodeLocation];
 
                     if (sourceNode->getDepth() == currentNode->getDepth())

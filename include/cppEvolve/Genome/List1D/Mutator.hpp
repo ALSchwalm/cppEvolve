@@ -20,8 +20,8 @@ namespace evolve
             template<typename Genome>
             void swap(Genome& g)
             {
-                unsigned int s1 = rand() % g.size();
-                unsigned int s2 = rand() % g.size();
+                unsigned int s1 = utils::random_uint(g.size());
+                unsigned int s2 = utils::random_uint(g.size());
 
                 auto s1location = begin(g);
                 auto s2location = begin(g);

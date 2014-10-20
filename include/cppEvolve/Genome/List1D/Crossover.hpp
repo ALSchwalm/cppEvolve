@@ -27,7 +27,7 @@ namespace evolve
                     Genome g;
 
                     auto size = std::min(g1.size(), g2.size());
-                    auto location = rand() % size;
+                    auto location = utils::random_uint(size);
 
                     for (auto i=0U; i < size; ++i)
                     {
@@ -49,7 +49,7 @@ namespace evolve
                     Genome g;
 
                     auto size = std::min(g1.size(), g2.size());
-                    auto location = rand() % size;
+                    auto location = utils::random_uint(size);
 
                     auto g1location = g1.begin();
                     auto g2location = g2.begin();
@@ -82,7 +82,7 @@ namespace evolve
             Genome randomCopy(const Genome& g1,
                               const Genome& g2)
             {
-                if (rand()%2) { return g1;}
+                if (utils::random_uint(2)) { return g1;}
                 return g2;
             }
 

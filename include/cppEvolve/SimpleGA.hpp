@@ -10,6 +10,7 @@
 namespace evolve
 {
     using std::function;
+    using utils::random_uint;
 
     ///Function which will return instances of Genome to be used in the initial population
     template<typename Genome>
@@ -37,7 +38,7 @@ namespace evolve
      * Defines a Simple genetic algorithm. That is, an algorithm for which no special
      * behavior is required to copy or modify the genome.
      */
-    template<typename Genome, size_t popSize=100>
+    template<typename Genome, size_t PopSize=100>
     class SimpleGA
     {
     public:
@@ -65,34 +66,30 @@ namespace evolve
             evaluator(_evaluator),
             crossover(_crossover),
             mutator(_mutator),
-            selector(_selector)
-        {
-            srand(time(NULL));
-        }
+            selector(_selector){}
 
         virtual ~SimpleGA(){}
 
         virtual void run(unsigned int generations, unsigned int logFrequency=100)
         {
             //Generation: create the new members
-            for(auto i=0U; i < popSize; ++i)
+            for(auto i=0U; i < PopSize; ++i)
             {
                 population.push_back(generator());
             }
 
             for(auto generation=0U; generation < generations; ++generation)
             {
-
                 //Crossover: Add missing members
                 auto popSizePostSelection = population.size();
-                while(population.size() < popSize) {
-                    population.push_back(crossover(population[rand() % popSizePostSelection],
-                                                   population[rand() % popSizePostSelection]));
+                while(population.size() < PopSize) {
+                    population.push_back(crossover(population[random_uint(popSizePostSelection)],
+                                                   population[random_uint(popSizePostSelection)]));
                 }
 
                 //Mutation: Mutate at least rate*popsize members
-                for(size_t i=0; i < popSize*mutationRate; ++i) {
-                    auto index = rand()%popSize;
+                for(size_t i=0; i < PopSize*mutationRate; ++i) {
+                    auto index = random_uint(PopSize);
                     mutator(population[index]);
                 }
 
@@ -119,11 +116,11 @@ namespace evolve
 
         void setMutationRate(float rate){mutationRate = rate;}
 
-        void setPopulation(const std::array<Genome, popSize>& _population) {
+        void setPopulation(const std::array<Genome, PopSize>& _population) {
             population = _population;
         }
 
-        std::array<Genome, popSize>& getPopulation() const {return population;}
+        std::array<Genome, PopSize>& getPopulation() const {return population;}
 
     protected:
         std::vector<Genome> population;

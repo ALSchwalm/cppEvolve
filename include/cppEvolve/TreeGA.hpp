@@ -9,13 +9,12 @@
 
 namespace evolve
 {
-
     /*!
      * Defines a GA to use with Tree-like genomes (typically for growing algorithms.
      * @param rType The type to be returned from the functions composing the tree
-     * @param popSize The static size of the population
+     * @param PopSize The static size of the population
      */
-    template<typename rType, size_t popSize=100>
+    template<typename rType, size_t PopSize=100>
     class TreeGA
     {
     public:
@@ -63,7 +62,7 @@ namespace evolve
          */
         virtual void run(unsigned int generations, unsigned int logFrequency=100)
         {
-            for(auto i=0U; i < popSize; ++i)
+            for(auto i=0U; i < PopSize; ++i)
             {
                 population.push_back(generator.make());
             }
@@ -74,14 +73,14 @@ namespace evolve
 
                 auto popSizePostSelection = population.size();
 
-                while(population.size() < popSize) {
-                    population.push_back(crossover(population[rand() % popSizePostSelection],
-                                                   population[rand() % popSizePostSelection]));
+                while(population.size() < PopSize) {
+                    population.push_back(crossover(population[random_uint(popSizePostSelection)],
+                                                   population[random_uint(popSizePostSelection)]));
                 }
 
 
-                for(size_t i=0; i < popSize*mutationRate; ++i) {
-                    auto index = rand()%popSize;
+                for(size_t i=0; i < PopSize*mutationRate; ++i) {
+                    auto index = random_uint(PopSize);
                     mutator(population[index], generator);
                 }
 
@@ -107,18 +106,18 @@ namespace evolve
         /*!
          * Set the GA population to pre-created population.
          */
-        void setPopulation(const std::array<Tree::Tree<rType>*, popSize>& _population) {
+        void setPopulation(const std::array<Tree::Tree<rType>*, PopSize>& _population) {
             population = _population;
         }
 
         /*!
          * Set the mutation rate for the GA. Mutation guarantees that at least
-         * popSize * rate individuals (not necessarily distinct) will be mutated
+         * PopSize * rate individuals (not necessarily distinct) will be mutated
          * each generation.
          */
         void setMutationRate(float rate) {mutationRate = rate;}
 
-        const std::array<Tree::Tree<rType>*, popSize>& getPopulation() const {return population;}
+        const std::array<Tree::Tree<rType>*, PopSize>& getPopulation() const {return population;}
 
         const Tree::Tree<rType>* getBest() const {return bestIndividual;}
 
@@ -132,13 +131,13 @@ namespace evolve
         function<float(const Tree::Tree<rType>*)> evaluator;
 
         function<Tree::Tree<rType>*(const Tree::Tree<rType>*,
-                                        const Tree::Tree<rType>*)> crossover;
+                                    const Tree::Tree<rType>*)> crossover;
 
         function<void(Tree::Tree<rType>*,
                       const Tree::TreeFactory<rType>&)> mutator;
 
         function<void(std::vector<Tree::Tree<rType>*>&,
-                           function<double(const Tree::Tree<rType>*)>)> selector;
+                      function<double(const Tree::Tree<rType>*)>)> selector;
 
         float mutationRate = 0.6f;
     };
