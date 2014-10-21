@@ -14,7 +14,7 @@ namespace evolve
      * Contains the definition of the Node and Tree classes used in TreeGA to compose function
      * trees at runtime.
      */
-    namespace Tree
+    namespace tree
     {
 
         /*!
@@ -22,7 +22,7 @@ namespace evolve
          * which are the genome of TreeGAs. The BaseNode class is used to hide the signature of the
          * wrapped functions.
          */
-        template<typename rtype>
+        template<typename Rtype>
         class BaseNode
         {
         public:
@@ -37,10 +37,10 @@ namespace evolve
             };
 
             ///Evaluate the node by evaluating all child nodes
-            virtual rtype eval() const=0;
+            virtual Rtype eval() const=0;
 
             ///Get the node's children
-            std::vector<BaseNode<rtype>*>& getChildren() {
+            std::vector<BaseNode<Rtype>*>& getChildren() {
                 return children;
             }
 
@@ -57,7 +57,7 @@ namespace evolve
             }
 
             ///Create a deep copy of the node
-            virtual BaseNode<rtype>* clone() const =0;
+            virtual BaseNode<Rtype>* clone() const =0;
 
             ///Get the number of child nodes
             virtual unsigned int getNumChildren() const =0;
@@ -75,7 +75,7 @@ namespace evolve
                 name(_name),
                 ID(_id){}
 
-            std::vector<BaseNode<rtype>*> children;
+            std::vector<BaseNode<Rtype>*> children;
             const std::string name;
             const unsigned int ID;
         };
@@ -166,11 +166,11 @@ namespace evolve
         /*!
          * Tree class that is the genome for TreeGA
          */
-        template<typename rType>
+        template<typename Rtype>
         class Tree
         {
         public:
-            Tree(BaseNode<rType>* _root) :
+            Tree(BaseNode<Rtype>* _root) :
                 root(_root){}
 
             ~Tree()
@@ -179,15 +179,15 @@ namespace evolve
             }
 
             ///Create a deep copy of the tree
-            Tree<rType>* clone() const
+            Tree<Rtype>* clone() const
             {
-                return new Tree<rType>(root->clone());
+                return new Tree<Rtype>(root->clone());
             }
 
             /*!
              * Evaluates the root BaseNode
              */
-            rType eval() const {
+            Rtype eval() const {
                 return root->eval();
             }
 
@@ -199,7 +199,7 @@ namespace evolve
             template<typename T>
             friend std::ostream& operator<< (std::ostream &out, const Tree<T>& tree);
 
-            BaseNode<rType>* root;
+            BaseNode<Rtype>* root;
 
         };
 
@@ -230,7 +230,7 @@ namespace evolve
         /*
          * Factory used to generate random trees for the TreeGA.
          */
-        template<typename rType>
+        template<typename Rtype>
         class TreeFactory
         {
         public:
@@ -240,31 +240,31 @@ namespace evolve
 
             ///Register a node function (i.e., a function taking 1 or more arguments)
             template<typename... T>
-            void addNode(rType(*f)(T...), const std::string& name)
+            void addNode(Rtype(*f)(T...), const std::string& name)
             {
                 static_assert(sizeof...(T) > 0, "Node function with 0 arguments should be terminator");
                 const auto val = currentID;
-                std::function<BaseNode<rType>*()> func = [f, name, val]() {     //explicitly capture to avoid bug in gcc
-                    return new Node<std::function<rType(T...)>>(f, name, val);
+                std::function<BaseNode<Rtype>*()> func = [f, name, val]() {     //explicitly capture to avoid bug in gcc
+                    return new Node<std::function<Rtype(T...)>>(f, name, val);
                 };
                 nodes[currentID++] = func;
             }
 
             ///Register a terminator (i.e., a function taking no arguments)
-            void addTerminator(rType(*f)(), const std::string& name)
+            void addTerminator(Rtype(*f)(), const std::string& name)
             {
                 const auto val = currentID;
-                std::function<BaseNode<rType>*()> func = [f, name, val]() {
-                    return new Terminator<std::function<rType()>>(f, name, val);
+                std::function<BaseNode<Rtype>*()> func = [f, name, val]() {
+                    return new Terminator<std::function<Rtype()>>(f, name, val);
                 };
                 terminators[currentID++] = func;
             }
 
             ///Create a tree with the registered functions
-            Tree<rType>* make() const
+            Tree<Rtype>* make() const
             {
                 assert(!terminators.empty() && !nodes.empty());
-                auto tree = new Tree<rType>(createRandomSubTree(depth));
+                auto tree = new Tree<Rtype>(createRandomSubTree(depth));
 
                 return tree;
             }
@@ -272,15 +272,15 @@ namespace evolve
             ///Create a random node
             ///Node: This node must not be eval'd until it has valid children,
             ///      to get a valid node, call createRandomSubTree
-            BaseNode<rType>* createRandomNode() const
+            BaseNode<Rtype>* createRandomNode() const
             {
                 auto loc = nodes.begin();
-                std::advance(loc, utis::random_uint(nodes.size()));
+                std::advance(loc, utils::random_uint(nodes.size()));
                 return ((*loc).second)();
             }
 
             ///Create a random terminator
-            BaseNode<rType>* createRandomTerminator() const
+            BaseNode<Rtype>* createRandomTerminator() const
             {
                 auto loc = terminators.begin();
                 std::advance(loc, utils::random_uint(terminators.size()));
@@ -288,9 +288,9 @@ namespace evolve
             }
 
             ///Create a random subtree
-            BaseNode<rType>* createRandomSubTree(unsigned int depth=5) const {
+            BaseNode<Rtype>* createRandomSubTree(unsigned int depth=5) const {
 
-                BaseNode<rType>* root = nullptr;
+                BaseNode<Rtype>* root = nullptr;
 
                 if (depth == 0) {
                     root = createRandomTerminator();
@@ -308,8 +308,8 @@ namespace evolve
         protected:
             unsigned int depth;
             unsigned int currentID;
-            std::map<unsigned int, std::function<BaseNode<rType>*()>> nodes;
-            std::map<unsigned int, std::function<BaseNode<rType>*()>> terminators;
+            std::map<unsigned int, std::function<BaseNode<Rtype>*()>> nodes;
+            std::map<unsigned int, std::function<BaseNode<Rtype>*()>> terminators;
 
         };
     }

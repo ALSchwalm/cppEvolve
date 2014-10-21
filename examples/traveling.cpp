@@ -10,7 +10,7 @@
 #include <map>
 
 using namespace evolve;
-using namespace evolve::List1DGenome;
+using namespace evolve::list1d;
 
 //define the 'cities' for this traveling salesman
 const std::map<const std::array<char, 2>, unsigned int> distances{
@@ -52,14 +52,14 @@ int main()
         fitness,
 
         //Crossover: Take a random copy of one parent (no crossing over)
-        List1DGenome::Crossover::randomCopy<Genome>,
+        list1d::crossover::randomCopy<Genome>,
 
         //Mutator: Swap two of the cities
-        List1DGenome::Mutator::swap<Genome>,
+        list1d::mutator::swap<Genome>,
 
         //Select the top 5 each generation ordered by lowest fitness value
         //(smaller distance is better)
-        Selector::top<Genome, 5, Ordering::LOWER>);
+        selector::top<Genome, 5, Ordering::LOWER>);
 
     //Evolve for 100 generations, converges on "acbd" or "dbca"
     gaList.run(100);

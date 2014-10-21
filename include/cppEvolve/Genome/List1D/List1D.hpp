@@ -13,7 +13,7 @@ namespace evolve
      *  Defines Mutators and Crossover functions for list-like structures including
      *  std::list, vector, deque and array
      */
-    namespace List1DGenome
+    namespace list1d
     {
         template <typename T>
         using List1D = std::vector<T>;

@@ -9,13 +9,13 @@
 
 namespace evolve
 {
-    namespace List1DGenome
+    namespace list1d
     {
 
         /*!
          *  Contains built-in crossover functions for list-like genomes
          */
-        namespace Crossover
+        namespace crossover
         {
             namespace details
             {

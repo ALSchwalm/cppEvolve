@@ -5,13 +5,13 @@
 
 namespace evolve
 {
-    namespace Tree
+    namespace tree
     {
 
         /*!
          *  Contains built-in mutators for the Tree genome
          */
-        namespace Mutator
+        namespace mutator
         {
 
             /*!

@@ -28,7 +28,7 @@ namespace nodes
 
 //The fitness of an individual is the number of distince primes yielded by
 //consecutive input
-double treeFitness(const Tree::Tree<int>* tree)
+double treeFitness(const tree::Tree<int>* tree)
 {
     double total = 0;
     std::vector<int> used;
@@ -49,7 +49,7 @@ using namespace nodes;
 int main() {
 
     //Construct a Tree generator which will return trees with a max-depth of 5
-    Tree::TreeFactory<int> factory(5);
+    tree::TreeFactory<int> factory(5);
 
     //Register the previous functions
     factory.addNode(sum, "sum");
@@ -69,13 +69,13 @@ int main() {
 
         //Crossover: Choose a single node in one parent tree and crossover with
         // a node from the other parent (hight will not increase)
-        Tree::Crossover::singlePoint<int>,
+        tree::crossover::singlePoint<int>,
 
         //Mutation: Replace a random node with a new random subtree
-        Tree::Mutator::randomNode<int>,
+        tree::mutator::randomNode<int>,
 
         //Selector: Select the 10 most fit members of the population each generation
-        Selector::top<Tree::Tree<int>*, 10>);
+        selector::top<tree::Tree<int>*, 10>);
 
     //Set mutation rate to 2%
     gaTree.setMutationRate(0.02f);

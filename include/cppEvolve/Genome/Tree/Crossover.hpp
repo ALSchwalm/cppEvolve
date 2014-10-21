@@ -5,12 +5,12 @@
 
 namespace evolve
 {
-    namespace Tree
+    namespace tree
     {
         /*!
          *  Contains built-in crossover functions for the Tree genome.
          */
-        namespace Crossover
+        namespace crossover
         {
 
             /*!

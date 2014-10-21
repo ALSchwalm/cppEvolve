@@ -9,8 +9,7 @@
 #include "cppEvolve/Genome/List1D/List1D.hpp"
 
 using namespace evolve;
-using namespace evolve::List1DGenome;
-using Genome = List1DFixed<int, 3>;
+using Genome = list1d::List1DFixed<int, 3>;
 
 int main() {
     auto generator = []() -> Genome {return {1, 2, 3};};
@@ -22,9 +21,9 @@ int main() {
 
     SimpleGA<Genome, 100> ga(generator,
                              fitness,
-                             List1DGenome::Crossover::singlePoint<Genome>,
-                             List1DGenome::Mutator::swap<Genome>,
-                             Selector::top<Genome, 3>);
+                             list1d::crossover::singlePoint<Genome>,
+                             list1d::mutator::swap<Genome>,
+                             selector::top<Genome, 3>);
 
     ga.run(1000);
 }

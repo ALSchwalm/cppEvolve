@@ -6,13 +6,13 @@
 
 namespace evolve
 {
-    namespace List1DGenome
+    namespace list1d
     {
 
         /*!
          *  Contains built-in mutators for list-like genomes
          */
-        namespace Mutator
+        namespace mutator
         {
             /*!
              *  Swaps two random alleles in the given Genome
