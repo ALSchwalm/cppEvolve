@@ -14,7 +14,7 @@ namespace evolve
      * @param rType The type to be returned from the functions composing the tree
      * @param PopSize The static size of the population
      */
-    template<typename rType, size_t PopSize=100>
+    template<typename Rtype, size_t PopSize=100>
     class TreeGA
     {
     public:
@@ -33,18 +33,18 @@ namespace evolve
          *
          * @param _selector A function which removes the less fit members from the population
          */
-        TreeGA(tree::TreeFactory<rType> _generator,
+        TreeGA(tree::TreeFactory<Rtype> _generator,
 
-                 function<float(const tree::Tree<rType>*)> _evaluator,
+                 function<float(const tree::Tree<Rtype>*)> _evaluator,
 
-                 function<tree::Tree<rType>*(const tree::Tree<rType>*,
-                                             const tree::Tree<rType>*)> _crossover,
+                 function<tree::Tree<Rtype>*(const tree::Tree<Rtype>*,
+                                             const tree::Tree<Rtype>*)> _crossover,
 
-                 function<void(tree::Tree<rType>*,
-                               const tree::TreeFactory<rType>&)> _mutator,
+                 function<void(tree::Tree<Rtype>*,
+                               const tree::TreeFactory<Rtype>&)> _mutator,
 
-                 function<void(std::vector<tree::Tree<rType>*>&,
-                               function<double(const tree::Tree<rType>*)>)> _selector) :
+                 function<void(std::vector<tree::Tree<Rtype>*>&,
+                               function<double(const tree::Tree<Rtype>*)>)> _selector) :
 
             generator(_generator),
             evaluator(_evaluator),
@@ -103,7 +103,7 @@ namespace evolve
         /*!
          * Set the GA population to pre-created population.
          */
-        void setPopulation(const std::array<tree::Tree<rType>*, PopSize>& _population) {
+        void setPopulation(const std::array<tree::Tree<Rtype>*, PopSize>& _population) {
             population = _population;
         }
 
@@ -114,27 +114,27 @@ namespace evolve
          */
         void setMutationRate(float rate) {mutationRate = rate;}
 
-        const std::array<tree::Tree<rType>*, PopSize>& getPopulation() const {return population;}
+        const std::array<tree::Tree<Rtype>*, PopSize>& getPopulation() const {return population;}
 
-        const tree::Tree<rType>* getBest() const {return bestIndividual;}
+        const tree::Tree<Rtype>* getBest() const {return bestIndividual;}
 
     protected:
-        std::vector<tree::Tree<rType>*> population;
-        tree::TreeFactory<rType> generator;
+        std::vector<tree::Tree<Rtype>*> population;
+        tree::TreeFactory<Rtype> generator;
 
-        tree::Tree<rType>* bestIndividual = nullptr;  //Historically best individual
+        tree::Tree<Rtype>* bestIndividual = nullptr;  //Historically best individual
         double bestScore = std::numeric_limits<float>::lowest();
 
-        function<float(const tree::Tree<rType>*)> evaluator;
+        function<float(const tree::Tree<Rtype>*)> evaluator;
 
-        function<tree::Tree<rType>*(const tree::Tree<rType>*,
-                                    const tree::Tree<rType>*)> crossover;
+        function<tree::Tree<Rtype>*(const tree::Tree<Rtype>*,
+                                    const tree::Tree<Rtype>*)> crossover;
 
-        function<void(tree::Tree<rType>*,
-                      const tree::TreeFactory<rType>&)> mutator;
+        function<void(tree::Tree<Rtype>*,
+                      const tree::TreeFactory<Rtype>&)> mutator;
 
-        function<void(std::vector<tree::Tree<rType>*>&,
-                      function<double(const tree::Tree<rType>*)>)> selector;
+        function<void(std::vector<tree::Tree<Rtype>*>&,
+                      function<double(const tree::Tree<Rtype>*)>)> selector;
 
         float mutationRate = 0.6f;
     };
