@@ -4,37 +4,32 @@
 
 #include "cppEvolve/utils.hpp"
 
-namespace evolve
+namespace evolve {
+namespace list1d {
+
+/*!
+ *  Contains built-in mutators for list-like genomes
+ */
+namespace mutator {
+
+/*!
+ *  Swaps two random alleles in the given Genome
+ */
+template<typename Genome>
+void swap(Genome& g)
 {
-    namespace list1d
-    {
+    unsigned int s1 = utils::random_uint(g.size());
+    unsigned int s2 = utils::random_uint(g.size());
 
-        /*!
-         *  Contains built-in mutators for list-like genomes
-         */
-        namespace mutator
-        {
-            /*!
-             *  Swaps two random alleles in the given Genome
-             */
-            template<typename Genome>
-            void swap(Genome& g)
-            {
-                unsigned int s1 = utils::random_uint(g.size());
-                unsigned int s2 = utils::random_uint(g.size());
+    auto s1location = begin(g);
+    auto s2location = begin(g);
 
-                auto s1location = begin(g);
-                auto s2location = begin(g);
+    std::advance(s1location, s1);
+    std::advance(s2location, s2);
 
-                std::advance(s1location, s1);
-                std::advance(s2location, s2);
-
-                std::swap(*s1location, *s2location);
-            }
-
-        }
-    }
+    std::swap(*s1location, *s2location);
 }
 
+}}}
 
 #endif
