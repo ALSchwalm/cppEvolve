@@ -8,6 +8,6 @@
 /*!
  * Namespace containing all the cppEvolve functions and classes
  */
-namespace evolve{}
+namespace evolve {}
 
 #endif

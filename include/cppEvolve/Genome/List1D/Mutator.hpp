@@ -15,9 +15,8 @@ namespace mutator {
 /*!
  *  Swaps two random alleles in the given Genome
  */
-template<typename Genome>
-void swap(Genome& g)
-{
+template <typename Genome>
+void swap(Genome& g) {
     unsigned int s1 = utils::random_uint(g.size());
     unsigned int s2 = utils::random_uint(g.size());
 
@@ -29,7 +28,8 @@ void swap(Genome& g)
 
     std::swap(*s1location, *s2location);
 }
-
-}}}
+}
+}
+}
 
 #endif

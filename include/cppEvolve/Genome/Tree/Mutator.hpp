@@ -15,7 +15,7 @@ namespace mutator {
  * Selects a random node from the tree. The node is then replaced with a
  * random sub tree such that the height of the tree is unaffected.
  */
-template<typename T>
+template <typename T>
 void randomNode(Tree<T>* tree, const TreeFactory<T>& factory) {
     auto treeDepth = tree->getDepth();
     auto depth = utils::random_uint(treeDepth);
@@ -23,9 +23,10 @@ void randomNode(Tree<T>* tree, const TreeFactory<T>& factory) {
     auto currentNode = tree->root;
     BaseNode<T>* prevNode = nullptr;
 
-    for (unsigned int i=0; i < depth; ++i) {
+    for (unsigned int i = 0; i < depth; ++i) {
         prevNode = currentNode;
-        auto nodeLocation = utils::random_uint(currentNode->getChildren().size());
+        auto nodeLocation =
+            utils::random_uint(currentNode->getChildren().size());
         currentNode = currentNode->getChildren()[nodeLocation];
 
         if (currentNode->getChildren().empty()) {
@@ -40,9 +41,11 @@ void randomNode(Tree<T>* tree, const TreeFactory<T>& factory) {
     auto nodeDepth = currentNode->getChildren()[childValue]->getDepth();
     delete currentNode->getChildren()[childValue];
 
-    currentNode->getChildren()[childValue] = factory.createRandomSubTree(nodeDepth-1);
+    currentNode->getChildren()[childValue] =
+        factory.createRandomSubTree(nodeDepth - 1);
 }
-
-}}}
+}
+}
+}
 
 #endif

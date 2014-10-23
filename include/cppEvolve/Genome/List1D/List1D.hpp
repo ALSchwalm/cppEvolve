@@ -5,23 +5,19 @@
 #include "Crossover.hpp"
 #include "Mutator.hpp"
 
+namespace evolve {
 
-namespace evolve
-{
+/*!
+ *  Defines Mutators and Crossover functions for list-like structures including
+ *  std::list, vector, deque and array
+ */
+namespace list1d {
+template <typename T>
+using List1D = std::vector<T>;
 
-    /*!
-     *  Defines Mutators and Crossover functions for list-like structures including
-     *  std::list, vector, deque and array
-     */
-    namespace list1d
-    {
-        template <typename T>
-        using List1D = std::vector<T>;
-
-        template<typename T, size_t size>
-        using List1DFixed = std::array<T, size>;
-    }
+template <typename T, size_t size>
+using List1DFixed = std::array<T, size>;
 }
-
+}
 
 #endif
