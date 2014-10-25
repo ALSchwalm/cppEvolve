@@ -78,9 +78,8 @@ void topHelper(std::vector<Genome>& population,
 template <typename Genome, size_t Num, Ordering Order = Ordering::HIGHER>
 void top(std::vector<Genome>& population,
          const std::function<float(const Genome&)>& evaluator) {
-    static_assert(
-        Num >= 1,
-        "Selector must leave at least 1 individual in the population");
+    static_assert(Num >= 1, "Selector must leave at least 1 individual in the "
+                            "population");
     assert(population.size() >= Num);
     using is_pointer_t = typename std::is_pointer<Genome>::type;
     details::topHelper<Genome, Num, Order>(population, evaluator,

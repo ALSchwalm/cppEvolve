@@ -94,8 +94,8 @@ public:
      * the results
      */
     virtual typename Genome::result_type eval() const override {
-        return utils::unpack_caller<typename Genome::result_type>::eval(
-            val, this->children);
+        return utils::unpack_caller<
+            typename Genome::result_type>::eval(val, this->children);
     }
 
     virtual unsigned int getNumChildren() const override {
